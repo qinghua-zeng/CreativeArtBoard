@@ -940,11 +940,11 @@ class freeOpenCurveButton {
             this.h = 15;
 
 
-            var button = new Path.Rectangle(new Point(this.x, this.y), new Size(this.w, this.h));
+            /* var button = new Path.Rectangle(new Point(this.x, this.y), new Size(this.w, this.h));
             button.fillColor = "red";
 
             var button2 = new Path.Rectangle(new Point(this.x, this.y + this.h), new Size(this.w, this.h));
-            button2.fillColor = "blue";
+            button2.fillColor = "blue"; */
 
             //var in1 = new Path.Rectangle(new Point(this.x, this.y), new Size(-10, 10));
             //in1.fillColor = "red";
@@ -958,14 +958,14 @@ class freeOpenCurveButton {
 
 
 
-            var text = new PointText(new Point(this.x + 2, this.y + 0));
+            /* var text = new PointText(new Point(this.x + 2, this.y + 0));
             text.fillColor = 'black';
             text.content = "focb";
 
             this.group = new Group({
                 children: [button, button2, text],
                 //position: new Point(380,390)
-            });
+            }); */
         }
 
         //私有变量
@@ -993,21 +993,21 @@ class freeOpenCurveButton {
     }
 
     draw() {
-        for (var i = 0; i < this.freeOpenCurvePanels.length; i++) {
+        /* for (var i = 0; i < this.freeOpenCurvePanels.length; i++) {
             this.freeOpenCurvePanels[i].draw();
-        }
+        } */
         //this.freeOpenCurvePanels[0].draw();
 
-        this.group.onMouseDrag = function (event) {
+        /* this.group.onMouseDrag = function (event) {
 
             this.translate(event.delta);
 
-        }
+        } */
 
-        this.group.children[0].onDoubleClick = () => {
+       /*  this.group.children[0].onDoubleClick = () => {
             this.freeOpenCurvePanels.push(new freeOpenCurve());
 
-        }
+        } */
 
 
 
@@ -1028,7 +1028,7 @@ class freeClosedCurveButton {
             this.w = 30;
             this.h = 15;
 
-            var button = new Path.Rectangle(new Point(this.x, this.y), new Size(this.w, this.h));
+ /*            var button = new Path.Rectangle(new Point(this.x, this.y), new Size(this.w, this.h));
             button.fillColor = "red";
 
             var button2 = new Path.Rectangle(new Point(this.x, this.y + this.h), new Size(this.w, this.h));
@@ -1041,19 +1041,19 @@ class freeClosedCurveButton {
             in2.fillColor = "red";
 
             var out1 = new Path.Rectangle(new Point(this.x + this.w, this.y), new Size(10, 10));
-            out1.fillColor = "red";
+            out1.fillColor = "red"; */
 
 
 
 
-            var text = new PointText(new Point(this.x + 2, this.y + 0));
+            /* var text = new PointText(new Point(this.x + 2, this.y + 0));
             text.fillColor = 'black';
-            text.content = "fcc";
+            text.content = "fcc"; */
 
-            this.group = new Group({
+            /* this.group = new Group({
                 children: [button, button2, text, in1, in2, out1],
                 //position: new Point(380,390)
-            });
+            }); */
         }
 
         this.freeCurvePanels = new Array;
@@ -1089,12 +1089,12 @@ class freeClosedCurveButton {
 
         }
 
-        this.group.children[0].onDoubleClick = () => {
+        /* this.group.children[0].onDoubleClick = () => {
             //this.x++;
             //alert(this.x);
             this.freeCurvePanels.push(new freeCloseCurve());
 
-        }
+        } */
 
 
 
@@ -1205,7 +1205,7 @@ class divideCurve {
             this.h = 15;
 
 
-            var button = new Path.Rectangle(new Point(this.x, this.y), new Size(this.w, this.h));
+ /*            var button = new Path.Rectangle(new Point(this.x, this.y), new Size(this.w, this.h));
             button.fillColor = "green";
 
             var button2 = new Path.Rectangle(new Point(this.x, this.y + this.h), new Size(this.w, this.h));
@@ -1227,20 +1227,21 @@ class divideCurve {
             this.group = new Group({
                 children: [button, button2, text, in1, in2, out1],
                 //position: new Point(380,390)
-            });
+            }); */
         }
 
         //私有变量
         {
             //有效画图区域
-            this.x1 = 20;
-            this.x2 = 640;
-            this.y1 = 30;
-            this.y2 = 330;
+            this.x1 = 0;
+            this.x2 = globalWidth;
+            this.y1 = 0;
+            this.y2 = globalHeight;
 
-            var point1 = new Point(30, 30);
+            var padding=30;//内边距
+            var point1 = new Point(padding, padding);
             //var point2 = new Point(420, 150);
-            var size = new Size(600, 300);
+            var size = new Size(globalWidth-padding*2, globalHeight-padding*2);
 
             //this.canvas = new Path.Rectangle(point, size);
             //this.canvas.strokeColor = 'black';
@@ -1258,7 +1259,7 @@ class divideCurve {
 
             this.multiPaths2 = new Array;
 
-            this.text1 = new PointText(new Point(50, 450));
+            this.text1 = new PointText(new Point(50, 495));
             this.text1.justification = 'left';
             this.text1.fillColor = 'black';
 
@@ -1406,13 +1407,13 @@ class divideCurve {
 
         this.text1.content = 'multiPaths1 : ' + this.multiPaths.length + '     multiPaths2 : ' + this.multiPaths2.length;
 
-        this.group.onMouseDrag = function (event) {
+        /* this.group.onMouseDrag = function (event) {
 
             this.translate(event.delta);
 
-        }
+        } */
 
-        this.group.children[0].onDoubleClick = () => {
+        /* this.group.children[0].onDoubleClick = () => {
             this.drawing = true;
             //alert(this.drawing);
 
@@ -1426,7 +1427,7 @@ class divideCurve {
         this.group.children[5].onDoubleClick = () => {
             temp = this.path;
 
-        }
+        } */
 
 
 

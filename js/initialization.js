@@ -21,10 +21,11 @@ window.onload = function () {
         //03 创建画布显示区域
         //globalCanvasX1=0;
         //globalCanvasX2=400;
-        glabalWidth = 800;
+        globalWidth = 800;
+        globalHeight=500;
         //globalHeight=600;
         //fx(0, 0, glabalWidth, glabalWidth);//03 
-        fx(0, 0, glabalWidth, 400);//03
+        fx(0, 0, globalWidth, globalHeight);//03
         //04 创建显示文字定义模块===================================
 
 
