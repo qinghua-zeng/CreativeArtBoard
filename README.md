@@ -1,2 +1,0 @@
-# paperJsPractice
-Created with CodeSandbox
