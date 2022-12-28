@@ -43,7 +43,7 @@ class divideCurve {
 
             //00.4存储状态的变量
             {
-                this.drawing = 'draw2'; //控制当前是不是在绘画
+                this.drawing = 'none'; //控制当前是不是在绘画
                 this.ifIn = false; //初始化的变量为不在画布内
                 this.seletedPathNum = 0;
                 this.mouseDragged = false;
@@ -56,9 +56,9 @@ class divideCurve {
                 this.text1.justification = 'left';
                 this.text1.fillColor = 'green'; //下方文字的颜色
 
-                this.selectButton = new mouseClickButton1(0, 362, 'select');
-                this.drawButton = new mouseClickButton1(60, 362, 'draw');
-                this.colorButton = new mouseClickButton1(120, 362, 'color');
+                //this.selectButton = new mouseClickButton1(0, 362, 'select');
+                //this.drawButton = new mouseClickButton1(60, 362, 'draw');
+                //this.colorButton = new mouseClickButton1(120, 362, 'color');
                 this.panel = new panel;
             }
 
@@ -93,8 +93,10 @@ class divideCurve {
     //01 鼠标按下的情况
     onMouseDown(event) {
         this.ifInside(event.point);
+        this.panel.onMouseDown(event); //第一时间更新panel的status的变量
+        this.drawing = this.panel.status;
 
-        if (this.drawing == 'selecting') { //01-2 如果是“选择”状态
+        if (this.drawing == 'select') { //01-2 如果是“选择”状态
             if (this.ifIn == true) {
                 console.log('multipath length: ' + this.multiPaths.length);
 
@@ -141,22 +143,7 @@ class divideCurve {
         }
 
 
-
-        //按钮状态
-        {
-            this.selectButton.mouseDown(event); //同步按钮状态
-            this.drawButton.mouseDown(event); //同步按钮状态
-            this.colorButton.mouseDown(event); //同步按钮状态
-            if (this.selectButton.x == true) {
-                this.drawing = 'selecting';
-            }
-
-            if (this.drawButton.x == true) {
-                this.drawing = 'draw2';
-            }
-        }
-
-        this.panel.onMouseDown(event);
+        //this.panel.onMouseDown(event);
 
     }
 
