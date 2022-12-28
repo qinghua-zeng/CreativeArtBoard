@@ -1,1438 +1,273 @@
-//10 圆滑曲线 停用=========
-class curve1 {
-    constructor() {
-        this.myShape = new Path();
-        //有效区域
-        this.x1 = 0;
-        this.x2 = 550;
-        this.y1 = 0;
-        this.y2 = 600;
-        this.ifIn;
-        //矩形边框
-        this.bounds;
-
-
-    }
-    draw(event) {
-        this.ifInside(event.point);
-        if (this.ifIn == true) {
-            this.myShape.add(event.point);
-            this.myShape.closed = true;
-            this.myShape.smooth();
-            this.myShape.fillColor = 'black';
-            this.myShape.strokeWidth = 2;
-            //this.myShape.strokeColor="black";
-            this.myShape.fullySelected = true;
-            //var bounds=this.myShape.bounds;
-            this.bounds = this.myShape.bounds;//曲线的矩形边框
-            //bounds.fillColor("red");
-        }
-    }
-
-    ifInside(point) {
-        if (point.x > this.x1 && point.x < this.x2 && point.y > this.y1 && point.y < this.y2) {
-            this.ifIn = true;
-
-        } else {
-            this.ifIn = false;
-        }
-    }
-}
-
-//10 圆滑曲线=========
-class curve2 {
-    constructor() {
-        //input
-        this.pts = new Array();
-
-        //this.pts.push(150,150);
-        this.x1 = 0;
-        this.x2 = 550;
-        this.y1 = 0;
-        this.y2 = 600;
-        this.ifIn;
-        this.drawing = true;
-
-
-        //矩形边框
-        this.bounds;
-        this.myShape;
-
-
-    }
-
-    draw(event) {
-        this.ifInside(event.point);
-        if (this.ifIn == true) {
-            this.pts.push(event.point);
-        }
-        this.myShape = new Path();
-        for (var i = 0; i < this.pts.length; i++) {
-            this.myShape.add(this.pts[i]);
-
-            this.myShape.smooth();
-            this.myShape.fillColor = "red";
-
-            this.myShape.fullySelected = true;
-            this.myShape.closed = true;
-
-
-        }
-        this.bounds = this.myShape.bounds;
-
-    }
-
-    ifInside(point) {
-        if (point.x > this.x1 && point.x < this.x2 && point.y > this.y1 && point.y < this.y2) {
-            this.ifIn = true;
-
-        } else {
-            this.ifIn = false;
-        }
-    }
-}
-
-//10 贝塞尔=========
-class bezier1 {
-    constructor() {
-        //input
-        //this.pts = new Array();
-        //this.handles=new Array;
-        this.drawing = true;
-        this.done = false;
-
-        this.mouseClick;
-        this.handleIn;
-        this.handleOut;
-        this.segments = new Array;
-
-        this.x1 = 400;
-        this.x2 = 800;
-        this.y1 = 0;
-        this.y2 = 400;
-        this.ifIn;
-
-
-
-        //矩形边框
-        this.bounds;
-        this.myShape;
-    }
-    mouseDown(event) {
-        this.ifInside(event.point);
-        if (this.ifIn == true && this.drawing == true) {
-            this.mouseClick = event.point;
-        }
-
-    }
-
-    mouseUp(event) {
-        //this.evp=event.point;
-        this.ifInside(event.point);
-        if (this.ifIn == true && this.drawing == true) {
-            this.handleIn = new Point(this.mouseClick.x - event.point.x, this.mouseClick.y - event.point.y);
-            this.handleOut = new Point(event.point.x - this.mouseClick.x, event.point.y - this.mouseClick.y);
-            this.segments.push(new Segment(this.mouseClick, this.handleIn, this.handleOut));
-        }
-    }
-
-    draw() {
-        this.myShape = new Path();
-        for (var i = 0; i < this.segments.length; i++) {
-            this.myShape.add(this.segments[i]);
-
-        }
-        this.myShape.strokeColor = "red";
-        this.myShape.closed = true;
-        this.myShape.fullySelected = true;
-
-
-        this.bounds = this.myShape.bounds;
-
-
-    }
-
-    ifInside(point) {
-        if (point.x > this.x1 && point.x < this.x2 && point.y > this.y1 && point.y < this.y2) {
-            this.ifIn = true;
-
-        } else {
-            this.ifIn = false;
-        }
-    }
-}
-
-//===
-class beziers {
-    constructor() {
-        this.multiPaths = new Array;
-        this.index = 0;
-        this.drawing = false;
-        this.newOne = true;
-        this.button = new mouseClickButton1(560, 450, "next");
-
-    }
-
-    update() {
-        //this.multiPaths.push(new bezier1());
-        this.index++;
-        this.newOne = true;
-
-
-    }
-
-    mouseDown(event) {
-        this.button.draw(event);
-        if (this.button.x == true) {
-
-            this.update();
-        }
-        if (this.newOne == true) {
-            //this.index=0;
-            this.multiPaths.push(new bezier1());
-            //alert(this.newOne);
-            this.newOne = false;
-            /* for(var i=0;i<this.multiPaths.length;i++){
-                this.multiPaths[i].mouseDown(event);
-            } */
-            this.multiPaths[this.index].mouseDown(event);
-
-
-        } else {
-
-            this.multiPaths[this.index].mouseDown(event);
-
-        }
-
-        //if(this.count==0){
-
-        //multiPaths[0].mouseDown(event);
-
-        //}
-
-
-
-
-    }
-
-    mouseUp(event) {
-        //multiPaths[0].mouseUp(event);
-        //alert(this.count);
-
-        this.multiPaths[this.index].mouseUp(event);
-        //index++;
-
-    }
-
-    draw() {
-        for (var i = 0; i < this.multiPaths.length; i++) {
-            this.multiPaths[i].draw();
-        }
-
-        //this.button.draw(event);
-    }
-
-
-}
-
-//===================================================================================
-class curve3 {
-    constructor() {
-        //
-
-        this.x = 0;
-        this.y = 300;
-        this.w = 30;
-        this.h = 15;
-
-
-        var button = new Path.Rectangle(new Point(this.x, this.y), new Size(this.w, this.h));
-        button.fillColor = "red";
-
-        var button2 = new Path.Rectangle(new Point(this.x, this.y + this.h), new Size(this.w, this.h));
-        button2.fillColor = "blue";
-
-
-
-        var text = new PointText(new Point(this.x + 2, this.y + 0));
-        text.fillColor = 'black';
-        text.content = "curve3";
-
-        this.group = new Group({
-            children: [button, button2, text],
-            //position: new Point(380,390)
-        });
-
-        //this.shapes = new Array;
-        //this.numberPanels.push(new mouseButton3());
-
-        this.multiPaths = new Array;
-        this.index = 0;
-        this.drawing = false;
-        this.newOne = true;
-    }
-
-    draw() {
-        tool.onKeyDown = function (event) {
-            if (event.key == 'q') {
-                // Scale the path by 110%:
-                //path.scale(1.1);
-                alert("ddd")
-                // Prevent the key event from bubbling
-                return false;
-            }
-        }
-
-    }
-
-
-
-}
-
-//10 贝塞尔=========
-class bezier2 {
-    constructor() {
-        //input
-        //this.pts = new Array();
-        //this.handles=new Array;
-        this.drawing = true;
-        this.done = false;
-
-        this.mouseClick;
-        this.handleIn;
-        this.handleOut;
-        this.segments = new Array;
-
-        this.x1 = 400;
-        this.x2 = 800;
-        this.y1 = 0;
-        this.y2 = 400;
-        this.ifIn;
-
-
-
-        //矩形边框
-        this.bounds;
-        this.myShape = new Path();
-    }
-    mouseDown(event) {
-        this.ifInside(event.point);
-        if (this.ifIn && this.drawing) {
-            this.mouseClick = event.point;
-        }
-
-    }
-
-    mouseUp(event) {
-        //this.evp=event.point;
-        this.ifInside(event.point);
-        if (this.ifIn && this.drawing) {
-            this.handleIn = new Point(this.mouseClick.x - event.point.x, this.mouseClick.y - event.point.y);
-            this.handleOut = new Point(event.point.x - this.mouseClick.x, event.point.y - this.mouseClick.y);
-            //this.segments.push(new Segment(this.mouseClick, this.handleIn, this.handleOut));
-            this.myShape.add(new Segment(this.mouseClick, this.handleIn, this.handleOut));
-            this.myShape.fillColor = "red";
-            this.myShape.strokeColor = "red";
-            this.myShape.closed = true;
-            this.myShape.fullySelected = true;
-            this.bounds = this.myShape.bounds
-        }
-    }
-
-    draw() {
-    }
-
-    ifInside(point) {
-        if (point.x > this.x1 && point.x < this.x2 && point.y > this.y1 && point.y < this.y2) {
-            this.ifIn = true;
-
-        } else {
-            this.ifIn = false;
-        }
-    }
-}
-
-
-//可以连续画出多个 曲线==============================================================================
-class beziers2 {
-    constructor() {
-        //beziers内容初始化
-        {
-            this.drawing = false;
-            this.index = 0;
-            //this.newOne = true;
-            //this.next = true;
-
-            //output
-            this.bounds = new Array;
-            this.bezier2s = new Array;
-            this.bezier2s.push(new bezier2());
-
-            this.multiPaths = new Array;
-        }
-
-
-        //电池模块初始化
-        {
-            this.x = 70;
-            this.y = 200;
-            this.w = 30;
-            this.h = 15;
-
-            var button = new Path.Rectangle(new Point(this.x, this.y), new Size(this.w, this.h));
-            button.fillColor = "pink";
-
-            var button2 = new Path.Rectangle(new Point(this.x, this.y + this.h), new Size(this.w, this.h));
-            button2.fillColor = "red";
-
-            var button3 = new Path.Rectangle(new Point(this.x, this.y + this.h + this.h), new Size(this.w, this.h));
-            button3.fillColor = "green";
-
-            var out1 = new Path.Rectangle(new Point(this.x + this.w, this.y), new Size(10, 10));
-            out1.fillColor = "red";
-
-            var out2 = new Path.Rectangle(new Point(this.x + this.w, this.y + 15), new Size(10, 10));
-            out2.fillColor = "red";
-
-
-
-            var text = new PointText(new Point(this.x + 2, this.y + 10));
-            text.fillColor = 'black';
-            text.content = "nt";
-
-            var text2 = new PointText(new Point(this.x + 2, this.y + 50));
-            text2.fillColor = 'black';
-            text2.content = this.drawing;
-
-            this.group = new Group({
-                children: [button, button2, text, text2, button3, out1, out2],
-                //position: new Point(380,390)
-            });
-
-        }
-
-    }
-
-
-
-    mouseDown(event) {
-
-        if (this.drawing) {
-            this.bezier2s[this.index].mouseDown(event);
-        }
-
-
-
-
-    }
-
-    mouseUp(event) {
-
-        if (this.drawing) {
-            this.bezier2s[this.index].mouseUp(event);
-        }
-
-
-    }
-
-    draw() {
-        //children: [button, button2, text, text2, button3, out1, out2],
-
-        //切换到下一个
-        this.group.children[0].onDoubleClick = () => {
-            this.next = true;
-
-            this.index++;
-            this.bezier2s.push(new bezier2());
-        }
-
-        //停止画线
-        this.group.children[1].onDoubleClick = () => {
-            this.drawing = false;
-        }
-
-        //开始画线
-        this.group.children[4].onDoubleClick = () => {
-            this.drawing = true;
-        }
-
-        //输出multiPaths
-        this.group.children[5].onDoubleClick = () => {
-            //temp = this.bezier2s;
-            for (var i = 0; i < this.bezier2s.length; i++) {
-                this.multiPaths.push(this.bezier2s[i].myShape);
-
-            }
-            temp = this.multiPaths;
-        }
-
-
-
-        //输出曲线的bound
-        this.group.children[6].onDoubleClick = () => {
-            //temp=this.bounds;
-            //po(this.bounds);
-            this.bounds.length = 0;
-            for (var i = 0; i < this.bezier2s.length; i++) {
-                this.bounds.push(this.bezier2s[i].bounds);
-            }
-            temp = this.bounds;
-            po(this.bounds);
-        }
-
-        //移动部件
-        this.group.onMouseDrag = function (event) {
-
-            this.translate(event.delta);
-
-        }
-        //this.button.draw(event);
-        this.group.children[3].content = 'drawing:' + this.drawing + '  index:' + this.index;
-    }
-
-
-}
-
-
-//10 贝塞尔=========
-class bezier3 {
-    constructor() {
-        //电池模板初始化
-        {
-            this.x = 150;
-            this.y = 100;
-            this.w = 30;
-            this.h = 15;
-
-
-
-            //this.numberPanels = new Array;
-            //this.numberPanels.push(new mouseButton3());
-
-            var button = new Path.Rectangle(new Point(this.x, this.y), new Size(this.w, this.h));
-            button.fillColor = "red";
-
-            var button2 = new Path.Rectangle(new Point(this.x, this.y + this.h), new Size(this.w, this.h));
-            button2.fillColor = "blue";
-
-            var in1 = new Path.Rectangle(new Point(this.x, this.y), new Size(-10, 10));
-            in1.fillColor = "red";
-
-            var in2 = new Path.Rectangle(new Point(this.x, this.y + 15), new Size(-10, 10));
-            in2.fillColor = "red";
-
-            var out1 = new Path.Rectangle(new Point(this.x + this.w, this.y), new Size(10, 10));
-            out1.fillColor = "red";
-
-            var out2 = new Path.Rectangle(new Point(this.x + this.w, this.y + 15), new Size(10, 10));
-            out2.fillColor = "red";
-
-
-            var text = new PointText(new Point(this.x + 2, this.y + 0));
-            text.fillColor = 'black';
-            text.content = "bezier";
-
-            this.group = new Group({
-                children: [button, button2, text, in1, in2, out1, out2],
-                //position: new Point(380,390)
-            });
-        }
-
-        //bezier私有属性
-        {
-            this.drawing = true;
-            this.done = false;
-
-            this.mouseClick;
-            this.handleIn;
-            this.handleOut;
-            this.segments = new Array;
-
-            this.x1 = 400;
-            this.x2 = 800;
-            this.y1 = 0;
-            this.y2 = 400;
-            this.ifIn;
-
-
-
-            //矩形边框
-            this.bounds = new Array;
-            this.multiPaths = new Array;
-            this.myShape = new Path();
-        }
-    }
-    mouseDown(event) {
-        this.ifInside(event.point);
-        if (this.ifIn == true && this.drawing == true) {
-            this.mouseClick = event.point;
-        }
-
-    }
-
-    mouseUp(event) {
-        //this.evp=event.point;
-        this.ifInside(event.point);
-        if (this.ifIn == true && this.drawing == true) {
-            this.handleIn = new Point(this.mouseClick.x - event.point.x, this.mouseClick.y - event.point.y);
-            this.handleOut = new Point(event.point.x - this.mouseClick.x, event.point.y - this.mouseClick.y);
-            //this.segments.push(new Segment(this.mouseClick, this.handleIn, this.handleOut));
-            this.myShape.add(new Segment(this.mouseClick, this.handleIn, this.handleOut));
-            this.myShape.fillColor = "red";
-            this.myShape.strokeColor = "red";
-            this.myShape.closed = true;
-            this.myShape.fullySelected = true;
-
-            this.bounds.length = 0;
-            this.bounds.push(this.myShape.bounds);
-
-        }
-    }
-
-    draw() {
-        //鼠标拖动电池模块
-        this.group.onMouseDrag = function (event) {
-
-            this.translate(event.delta);
-
-        }
-
-        //输出图形
-        this.group.children[5].onDoubleClick = () => {
-            this.multiPaths.length = 0;
-            this.multiPaths.push(this.myShape);
-            //alert(this.multiPaths.length)
-            temp = this.multiPaths;
-
-        }
-
-        //输出图形的bound
-        this.group.children[6].onDoubleClick = () => {
-            //this.bounds.length = 0;
-            //this.bounds.push(this.myShape.bound);
-            //alert(this.multiPaths.length)
-            temp = this.bounds;
-            //alert(this.bounds);
-
-        }
-    }
-
-    ifInside(point) {
-        if (point.x > this.x1 && point.x < this.x2 && point.y > this.y1 && point.y < this.y2) {
-            this.ifIn = true;
-
-        } else {
-            this.ifIn = false;
-        }
-    }
-}
-
-
-//freeOpenCurve===================================================================================
-class freeOpenCurve {
-    constructor() {
-        //电池模块初始化
-        {
-            this.x = 50;
-            this.y = 300;
-            this.w = 30;
-            this.h = 15;
-
-
-            var button = new Path.Rectangle(new Point(this.x, this.y), new Size(this.w, this.h));
-            button.fillColor = "green";
-
-            var button2 = new Path.Rectangle(new Point(this.x, this.y + this.h), new Size(this.w, this.h));
-            button2.fillColor = "blue";
-
-            var in1 = new Path.Rectangle(new Point(this.x, this.y), new Size(-10, 10));
-            in1.fillColor = "red";
-
-            var in2 = new Path.Rectangle(new Point(this.x, this.y + 15), new Size(-10, 10));
-            in2.fillColor = "red";
-
-            var out1 = new Path.Rectangle(new Point(this.x + this.w, this.y), new Size(10, 10));
-            out1.fillColor = "red";
-
-            var text = new PointText(new Point(this.x + 2, this.y + 0));
-            text.fillColor = 'black';
-            text.content = "freeC";
-
-            this.group = new Group({
-                children: [button, button2, text, in1, in2, out1],
-                //position: new Point(380,390)
-            });
-        }
-
-        //私有变量
-        {
-            this.x1 = 400;
-            this.x2 = 800;
-            this.y1 = 0;
-            this.y2 = 400;
-
-            this.path;
-            this.drawing = false;
-            this.ifIn = false;
-
-        }
-    }
-
-    onMouseDown(event) {
-        this.ifInside(event.point);
-        if (this.drawing) {
-
-            //if (this.drawing == 2) {
-
-            if (this.ifIn == true) {
-                //alert("ok");
-                // If we produced a path before, deselect it:
-                if (this.path) {
-                    this.path.selected = false;
-                    this.path.scale(0);
-                }
-
-                // Create a new path and set its stroke color to black:
-                this.path = new Path({
-                    segments: [event.point],
-                    strokeColor: 'black',
-                    // Select the path, so we can see its segment points:
-                    fullySelected: true,
-                    //closed=true
-                });
-
-            }
-
-            //}
-        }
-
-
-
-    }
-
-    // While the user drags the mouse, points are added to the path
-    // at the position of the mouse:
-    onMouseDrag(event) {
-        this.ifInside(event.point);
-        if (this.ifIn == true && this.drawing === true) {
-            this.path.add(event.point);
-
-        }
-
-    }
-
-    // When the mouse is released, we simplify the path:
-    onMouseUp(event) {
-        //this.ifInside(event.point);
-        //var segmentCount = this.path.segments.length;
-        if (this.ifIn == true) {
-            // When the mouse is released, simplify it:
-            if (this.drawing === true) {
-                this.path.simplify(10);
-
-                // Select the path, so we can see its segments:
-                this.path.fullySelected = true;
-            }
-
-
-        }
-
-    }
-
-    draw() {
-        this.group.onMouseDrag = function (event) {
-
-            this.translate(event.delta);
-
-        }
-
-        this.group.children[0].onDoubleClick = () => {
-            this.drawing = true;
-            //alert(this.drawing);
-
-        }
-
-        this.group.children[1].onDoubleClick = () => {
-            this.drawing = false;
-            //alert(this.drawing);
-
-        }
-        this.group.children[5].onDoubleClick = () => {
-            temp = this.path;
-
-        }
-
-
-
-    }
-
-    ifInside(point) {
-        if (point.x > this.x1 && point.x < this.x2 && point.y > this.y1 && point.y < this.y2) {
-            this.ifIn = true;
-
-        } else {
-            this.ifIn = false;
-        }
-    }
-
-}
-
-class freeCloseCurve {
-    constructor() {
-        //电池模块初始化
-        {
-            this.x = 250;
-            this.y = 300;
-            this.w = 30;
-            this.h = 15;
-
-
-            var button = new Path.Rectangle(new Point(this.x, this.y), new Size(this.w, this.h));
-            button.fillColor = "green";
-
-            var button2 = new Path.Rectangle(new Point(this.x, this.y + this.h), new Size(this.w, this.h));
-            button2.fillColor = "blue";
-
-            var in1 = new Path.Rectangle(new Point(this.x, this.y), new Size(-10, 10));
-            in1.fillColor = "red";
-
-            var in2 = new Path.Rectangle(new Point(this.x, this.y + 15), new Size(-10, 10));
-            in2.fillColor = "red";
-
-            var out1 = new Path.Rectangle(new Point(this.x + this.w, this.y), new Size(10, 10));
-            out1.fillColor = "red";
-
-            var text = new PointText(new Point(this.x + 2, this.y + 0));
-            text.fillColor = 'black';
-            text.content = "fCC";
-
-            this.group = new Group({
-                children: [button, button2, text, in1, in2, out1],
-                //position: new Point(380,390)
-            });
-        }
-
-        //私有变量
-        {
-            //有效画图区域
-            this.x1 = 400;
-            this.x2 = 800;
-            this.y1 = 0;
-            this.y2 = 400;
-
-            this.simplifyLevel = 3;
-            this.drawing = false;
-            this.path;
-            this.multiPaths = new Array;
-            this.ifIn = false;
-
-        }
-    }
-
-    onMouseDown(event) {
-        if (this.drawing) {
-            this.ifInside(event.point);
-            if (this.ifIn) {
-                // If we produced a path before, deselect it:
-                if (this.path) {
-                    this.path.selected = false;
-                    this.path.scale(0);
-                }
-
-                // Create a new path and set its stroke color to black:
-                this.path = new Path({
-                    segments: [event.point],
-                    strokeColor: 'black',
-                    // Select the path, so we can see its segment points:
-                    fullySelected: true
-                });
-
-            }
-        }
-
-
-    }
-
-
-    onMouseDrag(event) {
-        if (this.drawing) {
-            this.ifInside(event.point);
-            if (this.ifIn) {
-                this.path.add(event.point);
-
-                // Update the content of the text item to show how many
-                // segments it has:
-                //this.textItem.content = 'Segment count: ' + this.path.segments.length;
-            }
-
-        }
-
-
-    }
-
-    // When the mouse is released, we simplify the path:
-    onMouseUp(event) {
-
-        //var segmentCount = this.path.segments.length;
-        if (this.drawing && this.path && this.ifIn) {
-            // When the mouse is released, simplify it:
-            this.path.closed = true;
-            this.path.simplify(this.simplifyLevel);
-
-            // Select the path, so we can see its segments:
-            this.path.fullySelected = true;
-            this.multiPaths.length = 0;
-            this.multiPaths.push(this.path);
-            temp = this.multiPaths;
-
-        }
-
-    }
-
-    draw() {
-        this.group.onMouseDrag = function (event) {
-
-            this.translate(event.delta);
-
-        }
-
-        this.group.children[0].onDoubleClick = () => {
-            this.drawing = true;
-            //alert(this.drawing);
-
-        }
-
-        this.group.children[1].onDoubleClick = () => {
-            this.drawing = false;
-            //alert(this.drawing);
-
-        }
-
-        this.group.children[5].onDoubleClick = () => {
-            temp = this.multiPaths;
-            //alert(this.path.bounds);
-
-        }
-
-
-
-    }
-
-    ifInside(point) {
-        if (point.x > this.x1 && point.x < this.x2 && point.y > this.y1 && point.y < this.y2) {
-            this.ifIn = true;
-
-        } else {
-            this.ifIn = false;
-        }
-    }
-
-}
-
-//class模板===================================================================================
-class freeOpenCurveButton {
-    constructor() {
-        //电池初始化
-        {
-            this.x = 0;
-            this.y = 300;
-            this.w = 30;
-            this.h = 15;
-
-
-            /* var button = new Path.Rectangle(new Point(this.x, this.y), new Size(this.w, this.h));
-            button.fillColor = "red";
-
-            var button2 = new Path.Rectangle(new Point(this.x, this.y + this.h), new Size(this.w, this.h));
-            button2.fillColor = "blue"; */
-
-            //var in1 = new Path.Rectangle(new Point(this.x, this.y), new Size(-10, 10));
-            //in1.fillColor = "red";
-
-            //var in2 = new Path.Rectangle(new Point(this.x, this.y + 15), new Size(-10, 10));
-            //in2.fillColor = "red";
-
-            //var out1 = new Path.Rectangle(new Point(this.x + this.w, this.y), new Size(10, 10));
-            //out1.fillColor = "red";
-
-
-
-
-            /* var text = new PointText(new Point(this.x + 2, this.y + 0));
-            text.fillColor = 'black';
-            text.content = "focb";
-
-            this.group = new Group({
-                children: [button, button2, text],
-                //position: new Point(380,390)
-            }); */
-        }
-
-        //私有变量
-        this.freeOpenCurvePanels = new Array;
-        //this.freeOpenCurvePanels.push(new freeOpenCurve());
-    }
-    mouseDown(event) {
-        for (let i = 0; i < this.freeOpenCurvePanels.length; i++) {
-            this.freeOpenCurvePanels[i].onMouseDown(event);
-        }
-
-    }
-
-    mouseDrag(event) {
-        for (let i = 0; i < this.freeOpenCurvePanels.length; i++) {
-            this.freeOpenCurvePanels[i].onMouseDrag(event);
-        }
-    }
-
-    mouseUp(event) {
-        for (let i = 0; i < this.freeOpenCurvePanels.length; i++) {
-            this.freeOpenCurvePanels[i].onMouseUp(event);
-        }
-
-    }
-
-    draw() {
-        /* for (var i = 0; i < this.freeOpenCurvePanels.length; i++) {
-            this.freeOpenCurvePanels[i].draw();
-        } */
-        //this.freeOpenCurvePanels[0].draw();
-
-        /* this.group.onMouseDrag = function (event) {
-
-            this.translate(event.delta);
-
-        } */
-
-       /*  this.group.children[0].onDoubleClick = () => {
-            this.freeOpenCurvePanels.push(new freeOpenCurve());
-
-        } */
-
-
-
-    }
-
-
-
-}
-
-//class模板===================================================================================
-class freeClosedCurveButton {
-    constructor() {
-        //
-
-        {
-            this.x = 0;
-            this.y = 10;
-            this.w = 30;
-            this.h = 15;
-
- /*            var button = new Path.Rectangle(new Point(this.x, this.y), new Size(this.w, this.h));
-            button.fillColor = "red";
-
-            var button2 = new Path.Rectangle(new Point(this.x, this.y + this.h), new Size(this.w, this.h));
-            button2.fillColor = "blue";
-
-            var in1 = new Path.Rectangle(new Point(this.x, this.y), new Size(-10, 10));
-            in1.fillColor = "red";
-
-            var in2 = new Path.Rectangle(new Point(this.x, this.y + 15), new Size(-10, 10));
-            in2.fillColor = "red";
-
-            var out1 = new Path.Rectangle(new Point(this.x + this.w, this.y), new Size(10, 10));
-            out1.fillColor = "red"; */
-
-
-
-
-            /* var text = new PointText(new Point(this.x + 2, this.y + 0));
-            text.fillColor = 'black';
-            text.content = "fcc"; */
-
-            /* this.group = new Group({
-                children: [button, button2, text, in1, in2, out1],
-                //position: new Point(380,390)
-            }); */
-        }
-
-        this.freeCurvePanels = new Array;
-
-    }
-
-    mouseDown(event) {
-        for (let i = 0; i < this.freeCurvePanels.length; i++) {
-            this.freeCurvePanels[i].onMouseDown(event);
-        }
-
-    }
-    mouseDrag(event) {
-        for (let i = 0; i < this.freeCurvePanels.length; i++) {
-            this.freeCurvePanels[i].onMouseDrag(event);
-        }
-    }
-
-    mouseUp(event) {
-        for (let i = 0; i < this.freeCurvePanels.length; i++) {
-            this.freeCurvePanels[i].onMouseUp(event);
-        }
-    }
-
-    draw() {
-        for (let i = 0; i < this.freeCurvePanels.length; i++) {
-            this.freeCurvePanels[i].draw();
-        }
-
-        this.group.onMouseDrag = function (event) {
-
-            this.translate(event.delta);
-
-        }
-
-        /* this.group.children[0].onDoubleClick = () => {
-            //this.x++;
-            //alert(this.x);
-            this.freeCurvePanels.push(new freeCloseCurve());
-
-        } */
-
-
-
-    }
-
-
-
-}
-
-//class模板===================================================================================
-class beziersButton {
-    constructor() {
-        //电池初始化
-
-        {
-            this.x = 0;
-            this.y = 350;
-            this.w = 30;
-            this.h = 15;
-
-
-
-            //this.numberPanels = new Array;
-            //this.numberPanels.push(new mouseButton3());
-
-            var button = new Path.Rectangle(new Point(this.x, this.y), new Size(this.w, this.h));
-            button.fillColor = "red";
-
-            var button2 = new Path.Rectangle(new Point(this.x, this.y + this.h), new Size(this.w, this.h));
-            button2.fillColor = "blue";
-
-            var in1 = new Path.Rectangle(new Point(this.x, this.y), new Size(-10, 10));
-            in1.fillColor = "red";
-
-            var in2 = new Path.Rectangle(new Point(this.x, this.y + 15), new Size(-10, 10));
-            in2.fillColor = "red";
-
-            var out1 = new Path.Rectangle(new Point(this.x + this.w, this.y), new Size(10, 10));
-            out1.fillColor = "red";
-
-
-
-
-            var text = new PointText(new Point(this.x + 2, this.y + 0));
-            text.fillColor = 'black';
-            text.content = "beziers";
-
-            this.group = new Group({
-                children: [button, button2, text, in1, in2, out1],
-                //position: new Point(380,390)
-            });
-        }
-
-        this.beziersPanels = new Array;
-        //this.beziersPanels.push(new beziers2());
-    }
-
-    mouseDown(event) {
-        for (let i = 0; i < this.beziersPanels.length; i++) {
-            this.beziersPanels[i].mouseDown(event);
-        }
-
-    }
-
-
-    mouseUp(event) {
-        for (let i = 0; i < this.beziersPanels.length; i++) {
-            this.beziersPanels[i].mouseUp(event);
-        }
-    }
-
-
-    draw() {
-
-        for (let i = 0; i < this.beziersPanels.length; i++) {
-            this.beziersPanels[i].draw();
-        }
-
-        this.group.onMouseDrag = function (event) {
-
-            this.translate(event.delta);
-
-        }
-
-        this.group.children[0].onDoubleClick = () => {
-            this.beziersPanels.push(new beziers2());
-            //this.x++;
-            //alert(this.x);
-
-        }
-
-
-
-    }
-
-
-
-}
-
 //freeOpenCurve===================================================================================
 class divideCurve {
+
+    //00变量
     constructor() {
-        //电池模块初始化
-        {
-            this.x = 50;
-            this.y = 300;
-            this.w = 30;
-            this.h = 15;
-
-
- /*            var button = new Path.Rectangle(new Point(this.x, this.y), new Size(this.w, this.h));
-            button.fillColor = "green";
-
-            var button2 = new Path.Rectangle(new Point(this.x, this.y + this.h), new Size(this.w, this.h));
-            button2.fillColor = "red";
-
-            var in1 = new Path.Rectangle(new Point(this.x, this.y), new Size(-10, 10));
-            in1.fillColor = "grey";
-
-            var in2 = new Path.Rectangle(new Point(this.x, this.y + 15), new Size(-10, 10));
-            in2.fillColor = "grey";
-
-            var out1 = new Path.Rectangle(new Point(this.x + this.w, this.y), new Size(10, 10));
-            out1.fillColor = "grey";
-
-            var text = new PointText(new Point(this.x + 2, this.y + 0));
-            text.fillColor = 'black';
-            text.content = "dvdC";
-
-            this.group = new Group({
-                children: [button, button2, text, in1, in2, out1],
-                //position: new Point(380,390)
-            }); */
-        }
 
         //私有变量
         {
-            //有效画图区域
-            this.x1 = 0;
-            this.x2 = globalWidth;
-            this.y1 = 0;
-            this.y2 = globalHeight;
-
-            var padding=30;//内边距
-            var point1 = new Point(padding, padding);
-            //var point2 = new Point(420, 150);
-            var size = new Size(globalWidth-padding*2, globalHeight-padding*2);
-
-            //this.canvas = new Path.Rectangle(point, size);
-            //this.canvas.strokeColor = 'black';
-
-            this.path;
-            this.drawing = true;
-            this.ifIn = false;
-            this.multiPaths = new Array;
-            this.multiPaths.push(new Path.Rectangle(point1, size));
-            //this.multiPaths.push(new Path.Rectangle(point2, size));
-
-            for (let i = 0; i < this.multiPaths.length; i++) {
-                this.multiPaths[i].fillColor = Color.random();
+            //00.1 有效画图区域，可以画出路径的地方
+            {
+                this.x1 = 0;
+                this.x2 = 600;
+                this.y1 = 0;
+                this.y2 = 360;
+                this.drawingArea = new Path.Rectangle(this.x1, this.y1, this.x2, this.y2);
+                this.drawingArea.strokeColor = 'black';
             }
 
-            this.multiPaths2 = new Array;
+            //00.2 画布大小及位置
+            {
+                var padding = 30; //内边距
+                var point1 = new Point(padding, padding);
+                //var point2 = new Point(420, 150);
+                var size = new Size(540, 300);
+            }
 
-            this.text1 = new PointText(new Point(50, 495));
-            this.text1.justification = 'left';
-            this.text1.fillColor = 'black';
+            //00.3 存储图形的变量
+            {
+                this.path; //鼠标当前画的新路径
+                console.log(this.path);
+                this.multiPaths = new Array; //核心变量！！储存画布上显示的图形！！
+                this.multiPaths.push(new Path.Rectangle(point1, size)); //先放一个背景板，它是一个矩形路径
 
-
-        }
-    }
-
-    onMouseDown(event) {
-        for (let i = 0; i < this.multiPaths.length; i++) {
-            this.multiPaths[i].selected = false;
-
-        }
-
-        this.ifInside(event.point);
-        if (this.drawing) {
-            if (this.ifIn == true) {
-                // If we produced a path before, deselect it:
-                if (this.path) {
-                    this.path.selected = false;
-                    this.path.remove();
+                //初始化背景颜色
+                for (let i = 0; i < this.multiPaths.length; i++) {
+                    this.multiPaths[i].fillColor = 'white'; //初始化的背景是黑色
+                    this.multiPaths[i].strokeColor = 'black';
+                    //this.multiPaths[i].selected = false;
                 }
-
-                // Create a new path and set its stroke color to black:
-                this.path = new Path({
-                    segments: [event.point],
-                    //strokeColor: 'black',
-                    // Select the path, so we can see its segment points:
-                    fullySelected: true,
-                });
+                this.multiPaths2 = new Array; //负责存储图形布尔计算结果的数组，每次计算完会还给multiPaths数组！}
 
             }
 
-            //}
-        }
+            //存储状态的变量
+            {
+                this.drawing = 'draw2'; //控制当前是不是在绘画
+                this.ifIn = false; //初始化的变量为不在画布内
+                this.seletedPathNum = 0;
+                this.mouseDragged = false;
+            }
 
+            //画布变量信息显示
+            {
+
+                this.text1 = new PointText(new Point(50, 495)); //下方文字的位置
+                this.text1.justification = 'left';
+                this.text1.fillColor = 'green'; //下方文字的颜色
+
+                this.selectButton = new mouseClickButton1(50, 400, 'select');
+                this.drawButton = new mouseClickButton1(110, 400, 'draw');
+            }
+
+            //颜色变量
+            {
+                //this.myColor = new Array;
+                this.rMin = 200;
+                this.rMax = 255;
+                this.gMin = 0;
+                this.gMax = 255;
+                this.bMin = 200;
+                this.bMax = 255;
+                //this.currentColor;
+            }
+
+        }
+    }
+
+
+
+    //00-1 界面刷新
+    draw() {
+
+        //显示变量状态
+        {
+            this.text1.content = 'multiPaths1 : ' + this.multiPaths.length + '   multiPaths2 : ' + this.multiPaths2.length + '   status: ' + this.drawing + '   selected path:' + this.seletedPathNum + '  ifIn: ' + this.ifIn;
+        }
 
 
     }
 
-    // While the user drags the mouse, points are added to the path
-    onMouseDrag(event) {
-        for (let i = 0; i < this.multiPaths.length; i++) {
-            this.multiPaths[i].onMouseEnter = (event) => {
-                this.multiPaths[i].selected = true;
-            }
-        }
-
+    //01 鼠标按下的情况
+    onMouseDown(event) {
         this.ifInside(event.point);
-        if (this.ifIn && this.drawing) {
-            this.path.add(event.point);
 
-        }
-
-    }
-
-    // When the mouse is released, we simplify the path:
-    onMouseUp(event) {
-        //this.ifInside(event.point);
-        //var segmentCount = this.path.segments.length;
-        if (this.ifIn) {
-            // When the mouse is released, simplify it:
-            if (this.drawing) {
-                this.path.closed = true;
-                this.path.simplify(10);
+        if (this.drawing == 'selecting') { //01-2 如果是“选择”状态
+            if (this.ifIn == true) {
+                console.log('multipath length: ' + this.multiPaths.length);
 
                 for (let i = 0; i < this.multiPaths.length; i++) {
-                    if (this.multiPaths[i].selected) {
-                        //let tempCurve = this.multiPaths[i].subtract(this.path);
-                        //let tempCurve2 = this.multiPaths[i].intersect(this.path);
-                        //var copy = tempCurve.clone();
-                        //var copy2 = tempCurve2.clone();
-                        //copy.position.x += 0;
-                        //copy.fillColor = Color.random();
 
-                        //copy2.position.x += 0;
-                        //copy2.fillColor = "blue";
-                        this.multiPaths2.push(this.multiPaths[i].subtract(this.path));
-                        this.multiPaths2.push(this.multiPaths[i].intersect(this.path));
-                        this.multiPaths[i].remove();
+                    if (this.multiPaths[i].hitTest(event.point)) {
+                        this.multiPaths[i].selected = true; //
+                        this.multiPaths[i].strokeColor = 'blue';
+                        this.multiPaths[i].strokeWidth = '3';
                     } else {
-                        //var copy3 = this.multiPaths[i].clone();
-                        //copy3.position.x += 0;
-                        //copy3.fillColor = Color.random();
-                        this.multiPaths2.push(this.multiPaths[i].clone());
-                        //this.multiPaths2.push(this.multiPaths[i]);
-                        //alert(this.multiPaths2.length);
-                        this.multiPaths[i].remove();
+                        this.multiPaths[i].selected = false; //
+                        //this.multiPaths[i].strokeColor = 'red';
+                        this.multiPaths[i].strokeWidth = '0';
+                    }
+                    console.log('multipath[' + i + ']:' + this.multiPaths[i].selected);
+                }
+            }
+            //}
+
+        } else if (this.drawing == 'draw2') { //01-2 如果是“选择”状态
+
+            //}
+
+            if (this.ifIn == true) { //如果在路径范围里
+                //生成新手绘路径
+                {
+                    // If we produced a path before, deselect it:
+                    if (this.path) {
+                        this.path.selected = false;
+                        this.path.remove();
+                    }
+
+                    // Create a new path and set its stroke color to black:
+                    this.path = new Path({ //鼠标点击时候创建一个新图像
+                        segments: [event.point],
+                        fullySelected: true,
+                    });
+                    //console.log(this.path);
+                }
+
+
+
+            }
+        }
+
+
+
+        //按钮状态
+        {
+            this.selectButton.mouseDown(event); //同步按钮状态
+            this.drawButton.mouseDown(event); //同步按钮状态
+            if (this.selectButton.x == true) {
+                this.drawing = 'selecting';
+            }
+
+            if (this.drawButton.x == true) {
+                this.drawing = 'draw2';
+            }
+        }
+
+    }
+
+    //02 鼠标拖拽的情况  While the user drags the mouse, points are added to the path
+    onMouseDrag(event) {
+        this.mouseDragged = true;
+        if (this.drawing == 'draw2') {
+            //alert('drawing!');
+
+            //这次下笔产生的新图形
+
+            this.ifInside(event.point); //用于切换this.ifIn的状态，即鼠标是否在画布内
+            if (this.ifIn) {
+                this.path.add(event.point);
+            }
+
+
+        }
+
+    }
+
+    //03 鼠标释放的情况  When the mouse is released, we simplify the path:
+    onMouseUp(event) {
+        if (this.drawing == 'draw2') { //如果在画布内
+            // When the mouse is released, simplify it:
+            if (this.ifIn && this.mouseDragged == false) {
+                for (let i = 0; i < this.multiPaths.length; i++) {
+
+                    if (this.multiPaths[i].hitTest(event.point)) {
+                        this.multiPaths[i].selected = true; //
+                        this.multiPaths[i].strokeColor = 'blue';
+                        this.multiPaths[i].strokeWidth = '3';
+                    } else {
+                        this.multiPaths[i].selected = false; //
+                        //this.multiPaths[i].strokeColor = 'red';
+                        this.multiPaths[i].strokeWidth = '0';
+                    }
+                    console.log('multipath[' + i + ']:' + this.multiPaths[i].selected);
+                }
+                this.path.remove();
+            }
+            if (this.ifIn && this.mouseDragged) {
+                //对刚画完路径的处理
+                {
+                    this.path.closed = true;
+                    this.path.simplify(1); //精简路径
+                    //alert(this.path);
+                }
+
+                //用新画的图形与原图形生成新图形
+                for (let i = 0; i < this.multiPaths.length; i++) {
+                    if (this.multiPaths[i].selected) { //挑出被选中的图形
+                        //alert('you selected!');
+                        this.multiPaths2.push(this.multiPaths[i].subtract(this.path)); //一个相减
+
+                        this.multiPaths2.push(this.multiPaths[i].intersect(this.path)); //一个相交，就会把一个图形分成两个
+                        //this.getColor();
+                        this.multiPaths2[this.multiPaths2.length - 1].fillColor = this.getColor(); //为数组中最后（最新）一个图形上色
+                        this.multiPaths[i].remove(); //
+                    } else { //如果没被选中（鼠标没经过）
+
+                        this.multiPaths2.push(this.multiPaths[i].clone()); //把这个以前没变的路径原封不动放到multiPaths2，到此为止multiPaths2已经存储所有最新生成的图形
+                        //this.multiPaths[i].remove();
                     }
                 }
 
-                //this.multiPaths2.length = 0;
 
-                /* for (let i = 0; i < this.multiPaths.length; i++) {
-                    this.multiPaths[i].remove();
+                this.multiPaths.length = 0; //清空，为了放新的
 
-                } */
-
-                this.multiPaths.length = 0;
-                //this.multiPaths[0].scale(0);
-                //this.multiPaths = this.multiPaths2;
-
-
+                //把临时存储multiPaths2还给multiPaths数组
                 for (let j = 0; j < this.multiPaths2.length; j++) {
-                    //this.multiPaths2.push(this.multiPaths[i].divide(this.path));
-                    //this.multiPaths2[j].fillColor = Color.random();
-                    //var copy4=this.multiPaths2[j].clone();
                     this.multiPaths.push(this.multiPaths2[j].clone());
-                    //
-                    //alert(i);
                 }
 
-                for (let j = 0; j < this.multiPaths2.length; j++) {
-                    this.multiPaths2[j].selected = false;
-                    this.multiPaths2[j].remove();
-                }
-
-                this.multiPaths2.length = 0;
+                console.log('multipath length: ' + this.multiPaths.length);
 
                 for (let i = 0; i < this.multiPaths.length; i++) {
-                    //this.multiPaths[i].fillColor = "pink";
-                    this.multiPaths[i].selected = false;
-                    this.multiPaths[i].fillColor = Color.random();
-                    //alert(i);
+
+
+                    console.log('multipath[' + i + ']:' + this.multiPaths[i].selected);
                 }
 
-                this.path.remove();
+                //清空临时存储multiPaths2
+                {
+                    for (let j = 0; j < this.multiPaths2.length; j++) {
+                        this.multiPaths2[j].selected = false;
+                        this.multiPaths2[j].remove();
+                    }
+                    this.multiPaths2.length = 0; //清空临时储存路径的变量
+                }
 
+                //取消所有图形选择
+                for (let i = 0; i < this.multiPaths.length; i++) {
+                    this.multiPaths[i].selected = false; //先都取消选择
+                    this.multiPaths[i].strokeWidth = 0; //
+                }
+
+                this.path.remove(); //清空新画路径
+                this.mouseDragged = false;
                 //alert(this.multiPaths.length);
             }
-        }
-    }
+        } else {
+            for (let i = 0; i < this.multiPaths.length; i++) {
+                //this.multiPaths[i].selected = false; //先都取消选择
 
-    draw() {
-
-
-        /* path.onMouseEnter = function(event) {
-            this.fillColor = 'red';
-        } */
-
-        for (let i = 0; i < this.multiPaths.length; i++) {
-            this.multiPaths[i].onMouseDrag = (event) => {
-                this.multiPaths[i].selected = true;
             }
         }
-
-        this.text1.content = 'multiPaths1 : ' + this.multiPaths.length + '     multiPaths2 : ' + this.multiPaths2.length;
-
-        /* this.group.onMouseDrag = function (event) {
-
-            this.translate(event.delta);
-
-        } */
-
-        /* this.group.children[0].onDoubleClick = () => {
-            this.drawing = true;
-            //alert(this.drawing);
-
-        }
-
-        this.group.children[1].onDoubleClick = () => {
-            this.drawing = false;
-            //alert(this.drawing);
-
-        }
-        this.group.children[5].onDoubleClick = () => {
-            temp = this.path;
-
-        } */
-
-
+        this.seletedPathNum = 0;
 
     }
 
+    onMouseMove(event) {
+        this.ifInside(event.point);
+    }
+
+    //判断画的位置是不是在画布内的函数
     ifInside(point) {
         if (point.x > this.x1 && point.x < this.x2 && point.y > this.y1 && point.y < this.y2) {
             this.ifIn = true;
@@ -1440,6 +275,36 @@ class divideCurve {
         } else {
             this.ifIn = false;
         }
+    }
+
+    getColor() {
+        var r = Math.round(Math.random() * (this.rMax - this.rMin) + this.rMin);
+        var g = Math.round(Math.random() * (this.gMax - this.gMin) + this.gMin);
+        var b = Math.round(Math.random() * (this.bMax - this.bMin) + this.bMin);
+
+
+        // 转换为 16 进制字符串
+        r = r.toString(16);
+        g = g.toString(16);
+        b = b.toString(16);
+
+        // 补 0 直到达到两位
+        if (r.length < 2) {
+            r = '0' + r;
+        }
+        if (g.length < 2) {
+            g = '0' + g;
+        }
+        if (b.length < 2) {
+            b = '0' + b;
+        }
+
+        // 拼接字符串
+        var color3 = '#' + r + g + b;
+
+        //console.log(color3); // 输出 #ff0000
+
+        return color3;
     }
 
 }
