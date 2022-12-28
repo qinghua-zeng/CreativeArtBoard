@@ -41,7 +41,7 @@ class divideCurve {
 
             }
 
-            //存储状态的变量
+            //00.4存储状态的变量
             {
                 this.drawing = 'draw2'; //控制当前是不是在绘画
                 this.ifIn = false; //初始化的变量为不在画布内
@@ -49,18 +49,20 @@ class divideCurve {
                 this.mouseDragged = false;
             }
 
-            //画布变量信息显示
+            //00.5画布变量信息显示
             {
 
                 this.text1 = new PointText(new Point(50, 495)); //下方文字的位置
                 this.text1.justification = 'left';
                 this.text1.fillColor = 'green'; //下方文字的颜色
 
-                this.selectButton = new mouseClickButton1(50, 400, 'select');
-                this.drawButton = new mouseClickButton1(110, 400, 'draw');
+                this.selectButton = new mouseClickButton1(0, 362, 'select');
+                this.drawButton = new mouseClickButton1(60, 362, 'draw');
+                this.colorButton = new mouseClickButton1(120, 362, 'color');
+                this.panel = new panel;
             }
 
-            //颜色变量
+            //00.6颜色变量
             {
                 //this.myColor = new Array;
                 this.rMin = 200;
@@ -144,6 +146,7 @@ class divideCurve {
         {
             this.selectButton.mouseDown(event); //同步按钮状态
             this.drawButton.mouseDown(event); //同步按钮状态
+            this.colorButton.mouseDown(event); //同步按钮状态
             if (this.selectButton.x == true) {
                 this.drawing = 'selecting';
             }
@@ -153,30 +156,28 @@ class divideCurve {
             }
         }
 
+        this.panel.onMouseDown(event);
+
     }
 
     //02 鼠标拖拽的情况  While the user drags the mouse, points are added to the path
     onMouseDrag(event) {
         this.mouseDragged = true;
         if (this.drawing == 'draw2') {
-            //alert('drawing!');
-
             //这次下笔产生的新图形
-
             this.ifInside(event.point); //用于切换this.ifIn的状态，即鼠标是否在画布内
             if (this.ifIn) {
                 this.path.add(event.point);
             }
-
-
         }
 
     }
 
     //03 鼠标释放的情况  When the mouse is released, we simplify the path:
     onMouseUp(event) {
-        if (this.drawing == 'draw2') { //如果在画布内
-            // When the mouse is released, simplify it:
+        if (this.drawing == 'draw2') { //03-1 如果在画布内
+
+            //如果没拖拽过，删除创建的path
             if (this.ifIn && this.mouseDragged == false) {
                 for (let i = 0; i < this.multiPaths.length; i++) {
 
@@ -193,12 +194,12 @@ class divideCurve {
                 }
                 this.path.remove();
             }
+            //如果拖拽过，进行布尔运算
             if (this.ifIn && this.mouseDragged) {
                 //对刚画完路径的处理
                 {
                     this.path.closed = true;
                     this.path.simplify(1); //精简路径
-                    //alert(this.path);
                 }
 
                 //用新画的图形与原图形生成新图形
@@ -226,13 +227,16 @@ class divideCurve {
                     this.multiPaths.push(this.multiPaths2[j].clone());
                 }
 
-                console.log('multipath length: ' + this.multiPaths.length);
+                //打印路径数量
+                //console.log('multipath length: ' + this.multiPaths.length);
 
-                for (let i = 0; i < this.multiPaths.length; i++) {
-
-
-                    console.log('multipath[' + i + ']:' + this.multiPaths[i].selected);
+                //打印每个路径的是否被选择
+                {
+                    // for (let i = 0; i < this.multiPaths.length; i++) {
+                    //     console.log('multipath[' + i + ']:' + this.multiPaths[i].selected);
+                    // }
                 }
+
 
                 //清空临时存储multiPaths2
                 {
@@ -251,9 +255,8 @@ class divideCurve {
 
                 this.path.remove(); //清空新画路径
                 this.mouseDragged = false;
-                //alert(this.multiPaths.length);
             }
-        } else {
+        } else { //03 - 2 如果释放鼠标时鼠标在画布区域外
             for (let i = 0; i < this.multiPaths.length; i++) {
                 //this.multiPaths[i].selected = false; //先都取消选择
 
@@ -301,8 +304,6 @@ class divideCurve {
 
         // 拼接字符串
         var color3 = '#' + r + g + b;
-
-        //console.log(color3); // 输出 #ff0000
 
         return color3;
     }

@@ -55,52 +55,62 @@ class mouseClickButton1 {
 
 
         //Input
-        this.base = new Point(x, y);
-        this.h = 20;
-        this.w = 40;
-        this.x1 = this.base.x;
-        this.x2 = this.base.x + this.w;
-        this.y1 = this.base.y;
-        this.y2 = this.base.y + this.h;
+        {
+            this.base = new Point(x, y);
+            this.h = 20;
+            this.w = 40;
+        }
 
-        //this.y3 = this.base.y + this.h + this.h;
 
-        //this.text = new showInfo();
-        //this.text2 = new showInfo();
-        //this.content = content;
-        //output
+        //转换成4个坐标值
+        {
+            this.x1 = this.base.x;
+            this.x2 = this.base.x + this.w;
+            this.y1 = this.base.y;
+            this.y2 = this.base.y + this.h;
+        }
 
-        this.x = false; //主要参数
+        //按钮矩形框的初始化
+        {
+            this.button1 = new Path.Rectangle(this.base, new Size(this.w, this.h));
+            this.button1.fillColor = 'pink';
+        }
 
-        this.button1 = new Path.Rectangle(this.base, new Size(this.w, this.h));
-        this.button1.fillColor = 'pink';
-        //this.text.draw(this.content, this.x1 + 5, this.y1);
+        //按钮标题文字的初始化
+        {
+            this.text1 = new PointText(new Point(x + 3, y + 12)); //下方文字的位置
+            this.text1.justification = 'left';
+            this.text1.fillColor = 'black'; //下方文字的颜色
+            this.text1.content = title;
+        }
+
+        this.x = false; //主要参数，表示按钮是否被选择的状态
+        this.newClick = false;
 
     }
+
+
     draw(event) {
-        //this.x = false;
-        /* if (event.point.x > 0) {
-            alert("1");
-        } */
 
-        //alert(event);
-        /*         if (event.point.x > this.x1 && event.point.x < this.x2 && event.point.y > this.y1 && event.point.y < this.y2) {
-                    this.x = true;
-                    //this.x = false;
-                    this.button1.fillColor = 'green';
-                } */
-
-
-        //显示button 信息
     }
+
+
     mouseDown(event) {
-        //alert(event);
-        if (event.point.x > this.x1 && event.point.x < this.x2 && event.point.y > this.y1 && event.point.y < this.y2) {
+
+        if (this.button1.hitTest(event.point)) {
+            //console.log('hit!');
+
+            this.newClick = true;
             this.x = true;
-            //this.x = false;
+
             this.button1.fillColor = 'green';
         } else {
-            this.x = false;
+            //this.x = false;
+        }
+
+        if (this.x) {
+            this.button1.fillColor = 'green';
+        } else {
             this.button1.fillColor = 'pink';
         }
 
