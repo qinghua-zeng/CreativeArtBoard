@@ -41,7 +41,7 @@ class saveSVG {
 
 //保存文件 使用中==================
 function saveFile() {
-    var ko = project.exportSVG();
+    var ko = project.exportSVG(); //保存整个project！！要更改保存范围研究此行代码
     //var import1= project.importSVG("http://127.0.0.1/javascriptTest/bot.svg");
     //ko=project.exportSVG();
     var blob = new Blob([ko.outerHTML], { type: "text/plain;charset=utf-8" });

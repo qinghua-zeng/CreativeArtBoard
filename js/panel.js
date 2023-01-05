@@ -1,9 +1,11 @@
 class panel {
     constructor() {
         this.tools = new Array;
-        this.status = 'nothing'
+        this.status = 'draw2'
         this.tools.push(new mouseClickButton1(0, 362, 'select'));
         this.tools.push(new mouseClickButton1(60, 362, 'draw2'));
+        this.tools.push(new mouseClickButton1(120, 362, 'color'));
+        this.tools.push(new mouseClickButton1(180, 362, 'dots'));
     }
 
     onMouseDown(event) {
@@ -48,7 +50,7 @@ class panel {
 
         }
 
-        console.log(this.status);
+        //console.log(this.status);
 
 
     }

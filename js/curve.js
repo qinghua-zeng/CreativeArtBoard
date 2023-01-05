@@ -1,4 +1,4 @@
-//freeOpenCurve===================================================================================
+//freeOpenCurve==============================================
 class divideCurve {
 
     //00变量
@@ -27,23 +27,26 @@ class divideCurve {
             //00.3 存储图形的变量
             {
                 this.path; //鼠标当前画的新路径
-                console.log(this.path);
-                this.multiPaths = new Array; //核心变量！！储存画布上显示的图形！！
-                this.multiPaths.push(new Path.Rectangle(point1, size)); //先放一个背景板，它是一个矩形路径
 
-                //初始化背景颜色
-                for (let i = 0; i < this.multiPaths.length; i++) {
-                    this.multiPaths[i].fillColor = 'white'; //初始化的背景是黑色
-                    this.multiPaths[i].strokeColor = 'black';
-                    //this.multiPaths[i].selected = false;
+                this.pathShape = new smartShapeGroup();
+
+                this.shapeGroup = new smartShapeGroup();
+
+                //this.multiPaths.push(new Path.Rectangle(point1, size)); //先放一个背景板，它是一个矩形路径
+
+                //新背景
+                {
+                    this.shapeGroup.myShapeGroup.push(new smartShape(new Path.Rectangle(30, 30, 540, 300)));
+                    //初始化背景颜色
+                    this.shapeGroup.myShapeGroup[0].myShape.fillColor = 'pink';
+
                 }
-                this.multiPaths2 = new Array; //负责存储图形布尔计算结果的数组，每次计算完会还给multiPaths数组！}
 
             }
 
             //00.4存储状态的变量
             {
-                this.drawing = 'none'; //控制当前是不是在绘画
+                this.drawing = 'draw2'; //控制当前是不是在绘画
                 this.ifIn = false; //初始化的变量为不在画布内
                 this.seletedPathNum = 0;
                 this.mouseDragged = false;
@@ -56,10 +59,6 @@ class divideCurve {
                 this.text1.justification = 'left';
                 this.text1.fillColor = 'green'; //下方文字的颜色
 
-                //this.selectButton = new mouseClickButton1(0, 362, 'select');
-                //this.drawButton = new mouseClickButton1(60, 362, 'draw');
-                //this.colorButton = new mouseClickButton1(120, 362, 'color');
-                this.panel = new panel;
             }
 
             //00.6颜色变量
@@ -69,7 +68,7 @@ class divideCurve {
                 this.rMax = 255;
                 this.gMin = 0;
                 this.gMax = 255;
-                this.bMin = 200;
+                this.bMin = 100;
                 this.bMax = 255;
                 //this.currentColor;
             }
@@ -77,46 +76,24 @@ class divideCurve {
         }
     }
 
-
-
     //00-1 界面刷新
     draw() {
 
         //显示变量状态
         {
-            this.text1.content = 'multiPaths1 : ' + this.multiPaths.length + '   multiPaths2 : ' + this.multiPaths2.length + '   status: ' + this.drawing + '   selected path:' + this.seletedPathNum + '  ifIn: ' + this.ifIn;
+            this.text1.content = '   status: ' + this.drawing + '  ifIn: ' + this.ifIn;
         }
-
 
     }
 
     //01 鼠标按下的情况
     onMouseDown(event) {
         this.ifInside(event.point);
-        this.panel.onMouseDown(event); //第一时间更新panel的status的变量
-        this.drawing = this.panel.status;
 
-        if (this.drawing == 'select') { //01-2 如果是“选择”状态
-            if (this.ifIn == true) {
-                console.log('multipath length: ' + this.multiPaths.length);
-
-                for (let i = 0; i < this.multiPaths.length; i++) {
-
-                    if (this.multiPaths[i].hitTest(event.point)) {
-                        this.multiPaths[i].selected = true; //
-                        this.multiPaths[i].strokeColor = 'blue';
-                        this.multiPaths[i].strokeWidth = '3';
-                    } else {
-                        this.multiPaths[i].selected = false; //
-                        //this.multiPaths[i].strokeColor = 'red';
-                        this.multiPaths[i].strokeWidth = '0';
-                    }
-                    console.log('multipath[' + i + ']:' + this.multiPaths[i].selected);
-                }
-            }
-            //}
-
-        } else if (this.drawing == 'draw2') { //01-2 如果是“选择”状态
+        //01-2 如果是“选择”状态
+        if (this.drawing == 'select') {}
+        ////01-2 如果是“绘画”状态
+        if (this.drawing == 'draw2') {
 
             //}
 
@@ -142,9 +119,6 @@ class divideCurve {
             }
         }
 
-
-        //this.panel.onMouseDown(event);
-
     }
 
     //02 鼠标拖拽的情况  While the user drags the mouse, points are added to the path
@@ -162,95 +136,99 @@ class divideCurve {
 
     //03 鼠标释放的情况  When the mouse is released, we simplify the path:
     onMouseUp(event) {
-        if (this.drawing == 'draw2') { //03-1 如果在画布内
+        //03-1 如果是绘画模式
+        {
+            if (this.drawing == 'draw2') {
 
-            //如果没拖拽过，删除创建的path
-            if (this.ifIn && this.mouseDragged == false) {
-                for (let i = 0; i < this.multiPaths.length; i++) {
+                //03-1-1 如果没拖拽过，删除创建的path
+                if (this.ifIn && this.mouseDragged == false) {
 
-                    if (this.multiPaths[i].hitTest(event.point)) {
-                        this.multiPaths[i].selected = true; //
-                        this.multiPaths[i].strokeColor = 'blue';
-                        this.multiPaths[i].strokeWidth = '3';
-                    } else {
-                        this.multiPaths[i].selected = false; //
-                        //this.multiPaths[i].strokeColor = 'red';
-                        this.multiPaths[i].strokeWidth = '0';
+                    this.path.remove();
+                }
+
+                //03-1-2 如果拖拽过，进行布尔运算
+                if (this.ifIn && this.mouseDragged) {
+                    //03-1-2.1 对刚画完路径的简化处理
+                    {
+                        //path的生成
+                        {
+                            this.path.closed = true;
+                            this.path.simplify(1); //精简路径
+                            this.path.selected = false; //重要，防止生成结果有选择边界
+                        }
+
+                        //将path转换成smartShape类型
+                        {
+                            this.pathShape.myShapeGroup.length = 0;
+                            this.pathShape.myShapeGroup.push(new smartShape(this.path.clone()));
+
+                        }
+
                     }
-                    console.log('multipath[' + i + ']:' + this.multiPaths[i].selected);
-                }
-                this.path.remove();
-            }
-            //如果拖拽过，进行布尔运算
-            if (this.ifIn && this.mouseDragged) {
-                //对刚画完路径的处理
-                {
-                    this.path.closed = true;
-                    this.path.simplify(1); //精简路径
-                }
 
-                //用新画的图形与原图形生成新图形
-                for (let i = 0; i < this.multiPaths.length; i++) {
-                    if (this.multiPaths[i].selected) { //挑出被选中的图形
-                        //alert('you selected!');
-                        this.multiPaths2.push(this.multiPaths[i].subtract(this.path)); //一个相减
 
-                        this.multiPaths2.push(this.multiPaths[i].intersect(this.path)); //一个相交，就会把一个图形分成两个
-                        //this.getColor();
-                        this.multiPaths2[this.multiPaths2.length - 1].fillColor = this.getColor(); //为数组中最后（最新）一个图形上色
-                        this.multiPaths[i].remove(); //
-                    } else { //如果没被选中（鼠标没经过）
+                    //03-1-2.3 对shapeGroup的处理
+                    {
+                        this.shapeGroup.uniteShapes(this.pathShape); //对this.shapeGroup中图形的修改
 
-                        this.multiPaths2.push(this.multiPaths[i].clone()); //把这个以前没变的路径原封不动放到multiPaths2，到此为止multiPaths2已经存储所有最新生成的图形
-                        //this.multiPaths[i].remove();
+                        this.changeShapeGroupDisplay();
                     }
-                }
 
 
-                this.multiPaths.length = 0; //清空，为了放新的
+                    //03-1-2.4 最后处理pathShape 
+                    {
+                        for (let i = 0; i < this.pathShape.myShapeGroup.length; i++) {
+                            //this.pathShape.myShapeGroup[i].myShape.scale(0.3);
+                            this.pathShape.myShapeGroup[i].myShape.remove(); //取消显示，但不清空数组
+                        }
+                        this.pathShape.myShapeGroup.length = 0; //清空数组，但不取消显示 pathShape
 
-                //把临时存储multiPaths2还给multiPaths数组
-                for (let j = 0; j < this.multiPaths2.length; j++) {
-                    this.multiPaths.push(this.multiPaths2[j].clone());
-                }
-
-                //打印路径数量
-                //console.log('multipath length: ' + this.multiPaths.length);
-
-                //打印每个路径的是否被选择
-                {
-                    // for (let i = 0; i < this.multiPaths.length; i++) {
-                    //     console.log('multipath[' + i + ']:' + this.multiPaths[i].selected);
-                    // }
-                }
-
-
-                //清空临时存储multiPaths2
-                {
-                    for (let j = 0; j < this.multiPaths2.length; j++) {
-                        this.multiPaths2[j].selected = false;
-                        this.multiPaths2[j].remove();
+                        this.path.scale(0);
+                        this.path.remove(); //清空新画路径
                     }
-                    this.multiPaths2.length = 0; //清空临时储存路径的变量
+
+
+
+                    this.mouseDragged = false;
+
+
                 }
-
-                //取消所有图形选择
-                for (let i = 0; i < this.multiPaths.length; i++) {
-                    this.multiPaths[i].selected = false; //先都取消选择
-                    this.multiPaths[i].strokeWidth = 0; //
-                }
-
-                this.path.remove(); //清空新画路径
-                this.mouseDragged = false;
-            }
-        } else { //03 - 2 如果释放鼠标时鼠标在画布区域外
-            for (let i = 0; i < this.multiPaths.length; i++) {
-                //this.multiPaths[i].selected = false; //先都取消选择
-
             }
         }
-        this.seletedPathNum = 0;
 
+        //03-2 如果是选择模式
+        {
+            if (this.drawing == 'select') {
+                //console.log(this.pattern);
+
+                //03-2-2 对shapeGroup的操作
+                for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
+                    //console.log(i);
+                    if (this.shapeGroup.myShapeGroup[i].myShape.hitTest(event.point)) {
+                        this.shapeGroup.myShapeGroup[i].myShape.selected = true;
+
+                        this.shapeGroup.myShapeGroup[i].myShape.onDoubleClick = function(event) {
+                            //console.log('double Clicked: ' + i);
+                            let tempPattern = new smartShapeGroup();
+                            tempPattern.generatePattern(this.shapeGroup.myShapeGroup[i].myShape.bounds);
+
+                            //this.shapeGroup.myShapeGroup[i].myShape.selected = true;
+                            //console.log(this.shapeGroup.myShapeGroup[i].myShape.selected);
+                            this.shapeGroup.uniteSelectedShapes(tempPattern);
+                            this.changeShapeGroupDisplay();
+
+                            //console.log(tempPattern.myShapeGroup.length);
+
+
+                        }.bind(this);
+                    } else {
+                        this.shapeGroup.myShapeGroup[i].myShape.selected = false;
+                    }
+                }
+            }
+        }
+
+        console.log('=====finish=====');
     }
 
     onMouseMove(event) {
@@ -293,6 +271,16 @@ class divideCurve {
         var color3 = '#' + r + g + b;
 
         return color3;
+    }
+
+    changeShapeGroupDisplay() {
+        for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
+            this.shapeGroup.myShapeGroup[i].myShape.fillColor = this.getColor();
+            this.shapeGroup.myShapeGroup[i].myShape.strokeWidth = 4;
+            this.shapeGroup.myShapeGroup[i].myShape.strokeColor = 'black';
+            this.shapeGroup.myShapeGroup[i].myShape.opacity = 1;
+            this.shapeGroup.myShapeGroup[i].myShape.scale(1);
+        }
     }
 
 }
