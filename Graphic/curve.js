@@ -40,7 +40,9 @@ class divideCurve {
                 {
                     this.shapeGroup.myShapeGroup.push(new smartShape(new Path.Rectangle(150, 30, 540, 590)));
                     //初始化背景颜色
-                    this.shapeGroup.myShapeGroup[0].myShape.fillColor = 'pink';
+                    this.shapeGroup.myShapeGroup[0].myShape.fillColor = 'white';
+                    this.shapeGroup.myShapeGroup[0].myShape.strokeColor = 'black';
+                    this.shapeGroup.myShapeGroup[0].myShape.strokeWidth = 2;
 
                 }
 
@@ -50,7 +52,7 @@ class divideCurve {
             {
                 this.drawing = 'draw2'; //控制当前是不是在绘画
                 this.ifIn = false; //初始化的变量为不在画布内
-                this.seletedPathNum = 0;
+                //this.seletedPathNum = 0;
                 this.mouseDragged = false;
             }
 
@@ -63,17 +65,7 @@ class divideCurve {
 
             }
 
-            //00.6颜色变量
-            {
-                //this.myColor = new Array;
-                this.rMin = 200;
-                this.rMax = 255;
-                this.gMin = 0;
-                this.gMax = 255;
-                this.bMin = 100;
-                this.bMax = 255;
-                //this.currentColor;
-            }
+
 
         }
     }
@@ -146,6 +138,7 @@ class divideCurve {
                 if (this.ifIn && this.mouseDragged == false) {
 
                     this.path.remove();
+                    this.itemSelect(event);
                 }
 
                 //03-1-2 如果拖拽过，进行布尔运算
@@ -169,11 +162,10 @@ class divideCurve {
                     }
 
 
-                    //03-1-2.3 对shapeGroup的处理
+                    //03-1-2.3 进行相交运算
                     {
-                        this.shapeGroup.uniteShapes(this.pathShape); //对this.shapeGroup中图形的修改
+                        this.shapeGroup.uniteSelectedShapes(this.pathShape); //对this.shapeGroup中图形的修改
 
-                        this.changeShapeGroupDisplay();
                     }
 
 
@@ -189,10 +181,7 @@ class divideCurve {
                         this.path.remove(); //清空新画路径
                     }
 
-
-
                     this.mouseDragged = false;
-
 
                 }
             }
@@ -201,39 +190,23 @@ class divideCurve {
         //03-2 如果是选择模式
         {
             if (this.drawing == 'select') {
-                //console.log(this.pattern);
 
                 //03-2-2 对shapeGroup的操作
-                for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
-                    //console.log(i);
-                    if (this.shapeGroup.myShapeGroup[i].myShape.hitTest(event.point)) {
-                        this.shapeGroup.myShapeGroup[i].myShape.selected = true;
-
-                        this.shapeGroup.myShapeGroup[i].myShape.onDoubleClick = function(event) {
-
-                            let tempPattern = new smartShapeGroup();
-                            tempPattern.generatePattern(this.shapeGroup.myShapeGroup[i].myShape.bounds);
-
-                            this.shapeGroup.uniteSelectedShapes(tempPattern);
-                            this.changeShapeGroupDisplay();
-
-
-                        }.bind(this);
-                    } else {
-                        this.shapeGroup.myShapeGroup[i].myShape.selected = false;
-                    }
-                }
+                this.itemSelect(event);
+                this.generatePattern(event);
+                //this.displaySelectStatus();
             }
         }
 
         console.log('=====finish=====');
     }
 
+    //04
     onMouseMove(event) {
         this.ifInside(event.point);
     }
 
-    //判断画的位置是不是在画布内的函数
+    //05 判断画的位置是不是在画布内的函数
     ifInside(point) {
         if (point.x > this.x1 && point.x < this.x1 + this.canvasWidth && point.y > this.y1 && point.y < this.y1 + this.canvasHeight) {
             this.ifIn = true;
@@ -245,42 +218,56 @@ class divideCurve {
         }
     }
 
-    getColor() {
-        var r = Math.round(Math.random() * (this.rMax - this.rMin) + this.rMin);
-        var g = Math.round(Math.random() * (this.gMax - this.gMin) + this.gMin);
-        var b = Math.round(Math.random() * (this.bMax - this.bMin) + this.bMin);
-
-
-        // 转换为 16 进制字符串
-        r = r.toString(16);
-        g = g.toString(16);
-        b = b.toString(16);
-
-        // 补 0 直到达到两位
-        if (r.length < 2) {
-            r = '0' + r;
-        }
-        if (g.length < 2) {
-            g = '0' + g;
-        }
-        if (b.length < 2) {
-            b = '0' + b;
-        }
-
-        // 拼接字符串
-        var color3 = '#' + r + g + b;
-
-        return color3;
-    }
-
+    //0
     changeShapeGroupDisplay() {
         for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
-            this.shapeGroup.myShapeGroup[i].myShape.fillColor = this.getColor();
+            //this.shapeGroup.myShapeGroup[i].myShape.fillColor = this.getColor();
             this.shapeGroup.myShapeGroup[i].myShape.strokeWidth = 2;
             this.shapeGroup.myShapeGroup[i].myShape.strokeColor = 'black';
             this.shapeGroup.myShapeGroup[i].myShape.opacity = 1;
             this.shapeGroup.myShapeGroup[i].myShape.scale(1);
         }
     }
+
+    //0
+    itemSelect(event) {
+        for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
+            //console.log(i);
+            if (this.shapeGroup.myShapeGroup[i].myShape.hitTest(event.point)) {
+                this.shapeGroup.myShapeGroup[i].myShape.selected = true;
+
+
+            } else {
+                this.shapeGroup.myShapeGroup[i].myShape.selected = false;
+            }
+        }
+    }
+
+    //0
+    generatePattern(event) {
+        for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
+
+            this.shapeGroup.myShapeGroup[i].myShape.onDoubleClick = function(event) {
+
+                let tempPattern = new smartShapeGroup();
+                tempPattern.generatePattern(this.shapeGroup.myShapeGroup[i].myShape.bounds);
+
+                this.shapeGroup.uniteSelectedShapes(tempPattern);
+                this.changeShapeGroupDisplay();
+
+
+            }.bind(this);
+
+        }
+
+    }
+
+    //0
+    displaySelectStatus() {
+        for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
+            console.log(i + ': ' + this.shapeGroup.myShapeGroup[i].myShape.selected);
+        }
+    }
+
 
 }

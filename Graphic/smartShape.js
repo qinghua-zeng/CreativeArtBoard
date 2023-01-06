@@ -84,7 +84,6 @@ class smartShapeGroup {
 
 
         //03 把所有的布尔运算结果都给到 this.myShapeGroup
-        //console.log('final tempShapeGroup length: ' + this.tempShapeGroup.length);
         for (let i = 0; i < tempShapeGroup.length; i++) {
             tempShapeGroup[i].myShape.seleted = false;
             //this.myShapeGroup.push(this.tempShapeGroup[i]);
@@ -106,7 +105,6 @@ class smartShapeGroup {
 
         //05 结束，打印最终变量
         {
-            //this.tempShapeGroup.length = 0;
             console.log('final shapeGroup length: ' + this.myShapeGroup.length);
         }
 
@@ -132,6 +130,7 @@ class smartShapeGroup {
             if (this.myShapeGroup[i].myShape.selected == true) {
                 //console.log('yes! i:' + i + ' selected');
                 //console.log(i);
+                this.myShapeGroup[i].myShape.selected = false;
                 //02-1 对每个原始图形进行判断
                 for (let j = 0; j < shapes.myShapeGroup.length; j++) {
 
@@ -183,26 +182,22 @@ class smartShapeGroup {
 
         }
 
-        //let noSelected=
-
         //03 把所有的【相交】运算结果都给到 this.myShapeGroup
-
         for (let i = 0; i < tempShapeGroup.length; i++) {
             tempShapeGroup[i].myShape.seleted = false;
-            //this.myShapeGroup.push(this.tempShapeGroup[i]);
-            //this.tempShapeGroup[i].myShape.scale(0); //取消临时显示
-            tempShapeGroup[i].myShape.fillColor = 'green';
+
+            tempShapeGroup[i].myShape.fillColor = globalColor();
             this.myShapeGroup.push(tempShapeGroup[i]);
         }
 
         //04 myShapeGroup显示设置
         for (let i = 0; i < this.myShapeGroup.length; i++) {
-            //console.log(this.myShapeGroup[i].myShape.scale(1));
+
             //this.myShapeGroup[i].myShape.scale(0.2);
             this.myShapeGroup[i].myShape.seleted = false;
-            this.myShapeGroup[i].myShape.fillColor = 'red';
+            //this.myShapeGroup[i].myShape.fillColor = globalColor();
             this.myShapeGroup[i].myShape.strokeColor = 'black';
-            this.myShapeGroup[i].myShape.strokeWidth = 5;
+            this.myShapeGroup[i].myShape.strokeWidth = 2;
             //this.myShapeGroup[i].myShape.opacity = 0.8;
         }
 
