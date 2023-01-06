@@ -29,13 +29,13 @@ class mouseClickButton1 {
             this.text1 = new PointText(new Point(x + 3, y + 12)); //下方文字的位置
             this.text1.justification = 'left';
             this.text1.fillColor = 'black'; //下方文字的颜色
-            this.title = title;
-            this.text1.content = title;
+            this.text1.content = title; //负责按钮图标的显示
         }
 
         this.x = false; //主要参数，表示按钮是否被选择的状态
         this.newClick = false;
 
+        this.title = title; //负责向外传递的值
     }
 
 

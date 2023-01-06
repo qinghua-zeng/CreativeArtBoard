@@ -5,69 +5,46 @@ class divideCurve {
     constructor() {
 
         //私有变量
+
+        //00.1 有效画图区域，可以画出路径的地方
         {
-            //00.1 有效画图区域，可以画出路径的地方
-            {
-                this.x1 = 50;
-                //this.x2 = 620;
-                this.canvasWidth = 800;
-                this.y1 = 0;
-                //this.y2 = 360;
-                this.canvasHeight = 650;
-                this.drawingArea = new Path.Rectangle(this.x1, this.y1, this.canvasWidth, this.canvasHeight);
-                this.drawingArea.strokeColor = 'blue';
-            }
-
-            //00.2 画布大小及位置
-            {
-                //var padding = 30; //内边距
-                //var point1 = new Point(padding, padding);
-                //var point2 = new Point(420, 150);
-                //var size = new Size(540, 300);
-            }
-
-            //00.3 存储图形的变量
-            {
-                this.path; //鼠标当前画的新路径
-
-                this.pathShape = new smartShapeGroup();
-
-                this.shapeGroup = new smartShapeGroup();
-
-                //this.multiPaths.push(new Path.Rectangle(point1, size)); //先放一个背景板，它是一个矩形路径
-
-                //新背景
-                {
-                    this.shapeGroup.myShapeGroup.push(new smartShape(new Path.Rectangle(150, 30, 540, 590)));
-                    //初始化背景颜色
-                    this.shapeGroup.myShapeGroup[0].myShape.fillColor = 'white';
-                    this.shapeGroup.myShapeGroup[0].myShape.strokeColor = 'black';
-                    this.shapeGroup.myShapeGroup[0].myShape.strokeWidth = 2;
-
-                }
-
-            }
-
-            //00.4存储状态的变量
-            {
-                this.drawing = 'draw2'; //控制当前是不是在绘画
-                this.ifIn = false; //初始化的变量为不在画布内
-                //this.seletedPathNum = 0;
-                this.mouseDragged = false;
-            }
-
-            //00.5画布变量信息显示
-            {
-
-                this.text1 = new PointText(new Point(50, 695)); //下方文字的位置
-                this.text1.justification = 'left';
-                this.text1.fillColor = 'green'; //下方文字的颜色
-
-            }
-
-
-
+            this.x1 = 50;
+            this.canvasWidth = 800;
+            this.y1 = 0;
+            this.canvasHeight = 650;
+            this.drawingArea = new Path.Rectangle(this.x1, this.y1, this.canvasWidth, this.canvasHeight);
+            this.drawingArea.strokeColor = 'blue';
         }
+
+        //00.2 存储图形的变量
+        {
+            this.path; //鼠标当前画的新路径
+            this.simplifyLevel = 0;
+            this.shapeGroup = new smartShapeGroup();
+
+            //背景矩形，这个矩形规定了整个画面的范围
+            this.shapeGroup.myShapeGroup.push(new smartShape(new Path.Rectangle(150, 30, 540, 590)));
+            //初始化背景颜色
+            this.shapeGroup.myShapeGroup[0].myShape.fillColor = 'white';
+            this.shapeGroup.myShapeGroup[0].myShape.strokeColor = 'black';
+            this.shapeGroup.myShapeGroup[0].myShape.strokeWidth = 2;
+        }
+
+        //00.4存储状态的变量
+        {
+            this.drawing = 'draw2'; //控制当前是不是在绘画
+            this.ifIn = false; //初始化的变量为不在画布内
+            this.mouseDragged = false;
+        }
+
+        //00.5画布变量信息显示
+        {
+            this.text1 = new PointText(new Point(50, 695)); //下方文字的位置
+            this.text1.justification = 'left';
+            this.text1.fillColor = 'green'; //下方文字的颜色
+        }
+
+
     }
 
     //00-1 界面刷新
@@ -143,40 +120,26 @@ class divideCurve {
 
                 //03-1-2 如果拖拽过，进行布尔运算
                 if (this.ifIn && this.mouseDragged) {
+
+                    let pathSmartShapeGroup = new smartShapeGroup();
                     //03-1-2.1 对刚画完路径的简化处理
                     {
                         //path的生成
                         {
                             this.path.closed = true;
-                            this.path.simplify(1); //精简路径
+                            this.path.simplify(this.simplifyLevel); //精简路径
                             this.path.selected = false; //重要，防止生成结果有选择边界
-                        }
-
-                        //将path转换成smartShape类型
-                        {
-                            this.pathShape.myShapeGroup.length = 0;
-                            this.pathShape.myShapeGroup.push(new smartShape(this.path.clone()));
-
+                            pathSmartShapeGroup.myShapeGroup.push(new smartShape(this.path.clone()));
                         }
 
                     }
 
 
                     //03-1-2.3 进行相交运算
-                    {
-                        this.shapeGroup.uniteSelectedShapes(this.pathShape); //对this.shapeGroup中图形的修改
-
-                    }
-
+                    this.shapeGroup.uniteSelectedShapes(pathSmartShapeGroup); //对this.shapeGroup中图形的修改
 
                     //03-1-2.4 最后处理pathShape 
                     {
-                        for (let i = 0; i < this.pathShape.myShapeGroup.length; i++) {
-                            //this.pathShape.myShapeGroup[i].myShape.scale(0.3);
-                            this.pathShape.myShapeGroup[i].myShape.remove(); //取消显示，但不清空数组
-                        }
-                        this.pathShape.myShapeGroup.length = 0; //清空数组，但不取消显示 pathShape
-
                         this.path.scale(0);
                         this.path.remove(); //清空新画路径
                     }
