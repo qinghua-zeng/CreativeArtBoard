@@ -15,10 +15,10 @@ window.onload = function() {
 
     //绘制界面
     {
-        globalWidth = 600;
-        globalHeight = 500;
+        //globalWidth = 900;
+        //globalHeight = 500;
         //fx(0, 0, globalWidth, globalHeight); //03
-        let UI = new Path.Rectangle(0, 0, 600, 500);
+        let UI = new Path.Rectangle(0, 0, 900, 700);
         UI.strokeColor = 'black';
     }
 

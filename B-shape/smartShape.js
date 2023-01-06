@@ -235,8 +235,6 @@ class smartShapeGroup {
         }
     }
 
-
-
     //
     pushNewShape(shape) {
         this.myShapeGroup.push(new smartShape(shape));

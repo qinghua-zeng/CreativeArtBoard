@@ -8,20 +8,22 @@ class divideCurve {
         {
             //00.1 有效画图区域，可以画出路径的地方
             {
-                this.x1 = 0;
-                this.x2 = 600;
+                this.x1 = 50;
+                //this.x2 = 620;
+                this.canvasWidth = 800;
                 this.y1 = 0;
-                this.y2 = 360;
-                this.drawingArea = new Path.Rectangle(this.x1, this.y1, this.x2, this.y2);
-                this.drawingArea.strokeColor = 'black';
+                //this.y2 = 360;
+                this.canvasHeight = 650;
+                this.drawingArea = new Path.Rectangle(this.x1, this.y1, this.canvasWidth, this.canvasHeight);
+                this.drawingArea.strokeColor = 'blue';
             }
 
             //00.2 画布大小及位置
             {
-                var padding = 30; //内边距
-                var point1 = new Point(padding, padding);
+                //var padding = 30; //内边距
+                //var point1 = new Point(padding, padding);
                 //var point2 = new Point(420, 150);
-                var size = new Size(540, 300);
+                //var size = new Size(540, 300);
             }
 
             //00.3 存储图形的变量
@@ -36,7 +38,7 @@ class divideCurve {
 
                 //新背景
                 {
-                    this.shapeGroup.myShapeGroup.push(new smartShape(new Path.Rectangle(30, 30, 540, 300)));
+                    this.shapeGroup.myShapeGroup.push(new smartShape(new Path.Rectangle(150, 30, 540, 590)));
                     //初始化背景颜色
                     this.shapeGroup.myShapeGroup[0].myShape.fillColor = 'pink';
 
@@ -55,7 +57,7 @@ class divideCurve {
             //00.5画布变量信息显示
             {
 
-                this.text1 = new PointText(new Point(50, 495)); //下方文字的位置
+                this.text1 = new PointText(new Point(50, 695)); //下方文字的位置
                 this.text1.justification = 'left';
                 this.text1.fillColor = 'green'; //下方文字的颜色
 
@@ -208,16 +210,12 @@ class divideCurve {
                         this.shapeGroup.myShapeGroup[i].myShape.selected = true;
 
                         this.shapeGroup.myShapeGroup[i].myShape.onDoubleClick = function(event) {
-                            //console.log('double Clicked: ' + i);
+
                             let tempPattern = new smartShapeGroup();
                             tempPattern.generatePattern(this.shapeGroup.myShapeGroup[i].myShape.bounds);
 
-                            //this.shapeGroup.myShapeGroup[i].myShape.selected = true;
-                            //console.log(this.shapeGroup.myShapeGroup[i].myShape.selected);
                             this.shapeGroup.uniteSelectedShapes(tempPattern);
                             this.changeShapeGroupDisplay();
-
-                            //console.log(tempPattern.myShapeGroup.length);
 
 
                         }.bind(this);
@@ -237,8 +235,10 @@ class divideCurve {
 
     //判断画的位置是不是在画布内的函数
     ifInside(point) {
-        if (point.x > this.x1 && point.x < this.x2 && point.y > this.y1 && point.y < this.y2) {
+        if (point.x > this.x1 && point.x < this.x1 + this.canvasWidth && point.y > this.y1 && point.y < this.y1 + this.canvasHeight) {
             this.ifIn = true;
+            //console.log(point.x);
+            //console.log(this.x2);
 
         } else {
             this.ifIn = false;
@@ -276,7 +276,7 @@ class divideCurve {
     changeShapeGroupDisplay() {
         for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
             this.shapeGroup.myShapeGroup[i].myShape.fillColor = this.getColor();
-            this.shapeGroup.myShapeGroup[i].myShape.strokeWidth = 4;
+            this.shapeGroup.myShapeGroup[i].myShape.strokeWidth = 2;
             this.shapeGroup.myShapeGroup[i].myShape.strokeColor = 'black';
             this.shapeGroup.myShapeGroup[i].myShape.opacity = 1;
             this.shapeGroup.myShapeGroup[i].myShape.scale(1);

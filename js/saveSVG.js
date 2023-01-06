@@ -2,7 +2,7 @@
 class saveSVG {
     constructor() {
         this.x = 0;
-        this.y = 480;
+        this.y = 680;
         this.n;
         var button = new Path.Rectangle(new Point(this.x, this.y), new Size(40, 20));
         button.fillColor = "black";

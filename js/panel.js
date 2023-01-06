@@ -2,10 +2,10 @@ class panel {
     constructor() {
         this.tools = new Array;
         this.status = 'draw2'
-        this.tools.push(new mouseClickButton1(0, 362, 'select'));
-        this.tools.push(new mouseClickButton1(60, 362, 'draw2'));
-        this.tools.push(new mouseClickButton1(120, 362, 'color'));
-        this.tools.push(new mouseClickButton1(180, 362, 'dots'));
+        this.tools.push(new mouseClickButton1(0, 30, 'select'));
+        this.tools.push(new mouseClickButton1(0, 60, 'draw2'));
+        this.tools.push(new mouseClickButton1(0, 90, 'color'));
+        this.tools.push(new mouseClickButton1(0, 120, 'dots'));
     }
 
     onMouseDown(event) {
