@@ -97,7 +97,7 @@ class smartShapeGroup {
             //console.log(this.myShapeGroup[i].myShape.scale(1));
             //this.myShapeGroup[i].myShape.scale(0.2);
             this.myShapeGroup[i].myShape.seleted = false;
-            this.myShapeGroup[i].myShape.fillColor = 'red';
+            this.myShapeGroup[i].myShape.fillColor = 'pink';
             this.myShapeGroup[i].myShape.strokeColor = 'black';
             this.myShapeGroup[i].myShape.strokeWidth = 5;
             //this.myShapeGroup[i].myShape.opacity = 0.8;
@@ -116,11 +116,7 @@ class smartShapeGroup {
         let tempShapeGroup = new Array;
 
         //01 初始化
-        {
-
-            //console.log('intial shapeGroup length: ' + this.myShapeGroup.length);
-            //tempShapeGroup.length = 0;
-        }
+        //console.log('intial shapeGroup length: ' + this.myShapeGroup.length);
 
         //02 图形的布尔运算
         for (let i = 0; i < this.myShapeGroup.length; i++) {
@@ -149,6 +145,9 @@ class smartShapeGroup {
                             let kk = this.myShapeGroup[i].myShape.subtract(shapes.myShapeGroup[j].myShape);
 
                             let gg = shapes.myShapeGroup[j].myShape.intersect(this.myShapeGroup[i].myShape);
+
+                            gg.fillColor = 'green';
+                            gg.opacity = 1;
                             //在this.tempShapeGroup创建新的smartShape类
                             //this.tempShapeGroup.push(new smartShape());
                             tempShapeGroup.push(new smartShape(gg.clone()));
@@ -156,11 +155,12 @@ class smartShapeGroup {
                             //运算结果给到 this.tempShapeGroup
                             //tempShapeGroup[tempShapeGroup.length - 1].myShape = gg.clone();
 
-                            //kk.fillColor = 'black';
+                            kk.fillColor = 'black';
 
                             this.myShapeGroup[i].myShape.scale(0); //清空缓存
                             this.myShapeGroup[i].myShape.remove();
 
+                            kk.fillColor = 'red';
                             this.myShapeGroup[i].myShape = kk.clone(); //把参与运算的图形变成相减后的结果
 
                             kk.scale(0);
@@ -186,27 +186,24 @@ class smartShapeGroup {
         for (let i = 0; i < tempShapeGroup.length; i++) {
             tempShapeGroup[i].myShape.seleted = false;
 
-            tempShapeGroup[i].myShape.fillColor = globalColor();
+            tempShapeGroup[i].myShape.fillColor = 'yellow'; //只针对相交产生的图形
             this.myShapeGroup.push(tempShapeGroup[i]);
         }
 
-        //04 myShapeGroup显示设置
+        //04 myShapeGroup显示设置,注意这个是针对所有的图形
         for (let i = 0; i < this.myShapeGroup.length; i++) {
 
             //this.myShapeGroup[i].myShape.scale(0.2);
             this.myShapeGroup[i].myShape.seleted = false;
             //this.myShapeGroup[i].myShape.fillColor = globalColor();
+            //this.myShapeGroup[i].myShape.fillColor = 'red';
             this.myShapeGroup[i].myShape.strokeColor = 'black';
-            this.myShapeGroup[i].myShape.strokeWidth = 2;
+            this.myShapeGroup[i].myShape.strokeWidth = 0;
             //this.myShapeGroup[i].myShape.opacity = 0.8;
         }
 
         //05 结束，打印最终变量
-        {
-            //this.tempShapeGroup.length = 0;
-            //console.log('final shapeGroup length: ' + this.myShapeGroup.length);
-        }
-
+        //console.log('final shapeGroup length: ' + this.myShapeGroup.length);
 
     }
 
@@ -256,7 +253,7 @@ class smartShapeGroup {
                     //this.myShapeGroup.push(shapes.myShapeGroup[i]);
                     let temp = new smartShape(shapes.myShapeGroup[i].myShape.clone());
                     temp.myShape.opacity = 0;
-                    shapes.myShapeGroup[i].myShape.opacity = 0;
+                    shapes.myShapeGroup[i].myShape.opacity = 0; //这个把复制的图形全部隐藏
                     //console.log(shapes.myShapeGroup[i].myShape.position);
                     //console.log(temp.myShape.position);
                     temp.myShape.position = new Point((temp.myShape.position._x + (j * xSpace)), temp.myShape.position._y + (k * ySpace));

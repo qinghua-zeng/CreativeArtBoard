@@ -83,7 +83,7 @@ window.onload = function() {
         sketchWindow.onMouseUp(event);
 
         if (myPanel.sendSketchShapesButton.button1.hitTest(event.point)) {
-            console.log('send!');
+            //console.log('send!');
             sketchWindow.generateForSend(); //添加图形到 shapesForSend
 
             //sketchWindow.shapeGroup.myShapeGroup[0].myShape.scale(0.3);
@@ -94,6 +94,8 @@ window.onload = function() {
             dvdCurve.receivePattern(sketchWindow.shapesForSend);
             sketchWindow.shapesForSend.myShapeGroup.length = 0;
 
+            dvdCurve.shapeGroup.myShapeGroup[5].myShape.fillColor = 'black';
+            dvdCurve.changeShapeGroupDisplay();
             //sketchWindow.shapeGroup.myShapeGroup[0].myShape.scale(1.2);
 
         }

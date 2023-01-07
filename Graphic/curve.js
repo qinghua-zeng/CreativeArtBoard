@@ -121,11 +121,12 @@ class divideCurve {
 
                     this.path.remove();
                     this.itemSelect(event);
+                    //console.log('no drag');
                 }
 
                 //03-1-2 如果拖拽过，进行布尔运算
-                if (this.ifIn && this.mouseDragged) {
-
+                else if (this.ifIn && this.mouseDragged && this.ifAnySelected()) {
+                    //console.log('dragged');
                     let pathSmartShapeGroup = new smartShapeGroup();
                     //03-1-2.1 对刚画完路径的简化处理
                     {
@@ -139,19 +140,25 @@ class divideCurve {
 
                     }
 
-
                     //03-1-2.3 进行相交运算
                     this.shapeGroup.uniteSelectedShapes(pathSmartShapeGroup); //对this.shapeGroup中图形的修改
 
-                    //03-1-2.4 最后处理pathShape 
-                    {
-                        this.path.scale(0);
-                        this.path.remove(); //清空新画路径
-                    }
-
                     this.mouseDragged = false;
+                }
+
+                //如果拖拽过但没有任何东西选择
+                else if (this.ifIn && this.mouseDragged) {
+
+                    this.path.remove();
+                    //this.path.remove(); //清空新画路径
+                    this.mouseDragged = false;
+                }
+                //03-1-2.4 最后处理pathShape 
+                {
 
                 }
+
+
             }
         }
 
@@ -205,25 +212,27 @@ class divideCurve {
     //0
     changeShapeGroupDisplay() {
         for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
-            //this.shapeGroup.myShapeGroup[i].myShape.fillColor = this.getColor();
-            this.shapeGroup.myShapeGroup[i].myShape.strokeWidth = 2;
-            this.shapeGroup.myShapeGroup[i].myShape.strokeColor = 'black';
-            this.shapeGroup.myShapeGroup[i].myShape.opacity = 1;
-            this.shapeGroup.myShapeGroup[i].myShape.scale(1);
+            this.shapeGroup.myShapeGroup[i].myShape.fillColor = globalColor();
+            //this.shapeGroup.myShapeGroup[i].myShape.strokeWidth = 2;
+            //this.shapeGroup.myShapeGroup[i].myShape.strokeColor = 'black';
+            //this.shapeGroup.myShapeGroup[i].myShape.opacity = 1;
+            //this.shapeGroup.myShapeGroup[i].myShape.scale(1);
         }
     }
 
     //0
     itemSelect(event) {
         for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
-            //console.log(i);
-            if (this.shapeGroup.myShapeGroup[i].myShape.hitTest(event.point)) {
-                this.shapeGroup.myShapeGroup[i].myShape.selected = true;
+            if (this.ifIn) { //console.log(i);
+                if (this.shapeGroup.myShapeGroup[i].myShape.hitTest(event.point)) {
+                    this.shapeGroup.myShapeGroup[i].myShape.selected = true;
 
 
-            } else {
-                this.shapeGroup.myShapeGroup[i].myShape.selected = false;
+                } else {
+                    this.shapeGroup.myShapeGroup[i].myShape.selected = false;
+                }
             }
+
         }
     }
 
@@ -246,23 +255,23 @@ class divideCurve {
 
     }
 
-    //用于在sketchWindow里生成基本图形
+    //用于在sketchWindow里生成基本图形，这个函数主要目的把临时变量shapesForSend弄出来
     generateForSend() {
         //console.log('generateForSend');
 
         for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
-            if (this.shapeGroup.myShapeGroup[i].myShape.selected) {
+            if (this.shapeGroup.myShapeGroup[i].myShape.selected) { //只有某个图形被选择才会生成图形
                 this.shapeGroup.myShapeGroup[i].myShape.selected = false;
                 //this.shapesForSend.myShapeGroup.push(this.shapeGroup.myShapeGroup[i].myShape);
-                this.shapesForSend.pushNewShape(this.shapeGroup.myShapeGroup[i].myShape.clone());
+                this.shapesForSend.pushNewShape(this.shapeGroup.myShapeGroup[i].myShape.clone()); //把这个被选择的图形加到临时变量shapesForSend里
 
 
-                console.log('this.shapesForSend.myShapeGroup.length: ' + this.shapesForSend.myShapeGroup.length);
+                //console.log('this.shapesForSend.myShapeGroup.length: ' + this.shapesForSend.myShapeGroup.length);
             }
 
 
         }
-        this.shapesForSend.myShapeGroup[0].myShape.selected = false;
+        //this.shapesForSend.myShapeGroup[0].myShape.selected = false;
         //this.shapesForSend.myShapeGroup[0].myShape.position = new Point(200, 200);
         //this.shapesForSend.myShapeGroup[0].myShape.fillColor = 'green';
         //this.shapesForSend.myShapeGroup.length = 0;
@@ -270,18 +279,19 @@ class divideCurve {
 
 
 
-    //接受sketchWindow里生成的基本图形，并交给generatePattern2复制多个
+    //这个函数在主窗口的对象中执行。接受sketchWindow里生成的基本图形，并交给generatePattern2复制多个
     receivePattern(shapes) {
+
+        //选择被选中的那个（些）图形
         for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
 
-
+            //如果被选中
             if (this.shapeGroup.myShapeGroup[i].myShape.selected) {
-                //console.log('receive!');
-                //console.log(shapes);
 
-                let tempPattern = new smartShapeGroup();
-                tempPattern.generatePattern2(this.shapeGroup.myShapeGroup[i].myShape.bounds, shapes);
-                this.shapeGroup.uniteSelectedShapes(tempPattern);
+
+                let tempPattern = new smartShapeGroup(); //临时变量存放生成的pattern
+                tempPattern.generatePattern2(this.shapeGroup.myShapeGroup[i].myShape.bounds, shapes); //基于输入的图形
+                this.shapeGroup.uniteSelectedShapes(tempPattern); //和全体图形相交运算
                 this.changeShapeGroupDisplay();
             }
 
@@ -303,14 +313,24 @@ class divideCurve {
     }
 
 
-
-
-
     //0
     displaySelectStatus() {
         for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
             console.log(i + ': ' + this.shapeGroup.myShapeGroup[i].myShape.selected);
         }
+    }
+
+    //
+    ifAnySelected() {
+        let ifAnySelected;
+        for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
+            if (this.shapeGroup.myShapeGroup[i].myShape.selected) {
+                ifAnySelected = true;
+            }
+
+            //console.log(i + ': ' + this.shapeGroup.myShapeGroup[i].myShape.selected);
+        }
+        return ifAnySelected;
     }
 
 
