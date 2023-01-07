@@ -6,7 +6,7 @@ class mouseClickButton1 {
         {
             this.base = new Point(x, y);
             this.h = 20;
-            this.w = 40;
+            this.w = 50;
         }
 
 

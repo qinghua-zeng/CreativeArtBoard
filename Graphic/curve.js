@@ -2,18 +2,17 @@
 class divideCurve {
 
     //00变量
-    constructor() {
-
-        //私有变量
+    constructor(x, y, w, h) {
 
         //00.1 有效画图区域，可以画出路径的地方
         {
-            this.x1 = 50;
-            this.canvasWidth = 800;
-            this.y1 = 0;
-            this.canvasHeight = 650;
+            this.x1 = x;
+            this.canvasWidth = w;
+            this.y1 = y;
+            this.canvasHeight = h;
             this.drawingArea = new Path.Rectangle(this.x1, this.y1, this.canvasWidth, this.canvasHeight);
             this.drawingArea.strokeColor = 'blue';
+            this.drawingArea.fillColor = 'white';
         }
 
         //00.2 存储图形的变量
@@ -23,7 +22,7 @@ class divideCurve {
             this.shapeGroup = new smartShapeGroup();
 
             //背景矩形，这个矩形规定了整个画面的范围
-            this.shapeGroup.myShapeGroup.push(new smartShape(new Path.Rectangle(150, 30, 540, 590)));
+            this.shapeGroup.myShapeGroup.push(new smartShape(new Path.Rectangle(this.x1 + 30, this.y1 + 30, this.canvasWidth - 60, this.canvasHeight - 60)));
             //初始化背景颜色
             this.shapeGroup.myShapeGroup[0].myShape.fillColor = 'white';
             this.shapeGroup.myShapeGroup[0].myShape.strokeColor = 'black';
@@ -35,14 +34,17 @@ class divideCurve {
             this.drawing = 'draw2'; //控制当前是不是在绘画
             this.ifIn = false; //初始化的变量为不在画布内
             this.mouseDragged = false;
+            this.currentTag;
         }
 
         //00.5画布变量信息显示
         {
-            this.text1 = new PointText(new Point(50, 695)); //下方文字的位置
+            this.text1 = new PointText(new Point(this.x1, this.y1 + this.canvasHeight - 10)); //下方文字的位置
             this.text1.justification = 'left';
             this.text1.fillColor = 'green'; //下方文字的颜色
         }
+
+
 
 
     }
@@ -52,7 +54,7 @@ class divideCurve {
 
         //显示变量状态
         {
-            this.text1.content = '   status: ' + this.drawing + '  ifIn: ' + this.ifIn;
+            this.text1.content = '   status: ' + this.drawing + '  ifIn: ' + this.ifIn + '  simplifyLevel: ' + this.simplifyLevel;
         }
 
     }
@@ -162,6 +164,22 @@ class divideCurve {
         }
 
         console.log('=====finish=====');
+    }
+
+    onKeyUp(event) {
+        //console.log('event.key: ' + event.key);
+        if (event.key == 't') {
+            for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
+                //console.log(i + ': ' + this.shapeGroup.myShapeGroup[i].myShape.selected);
+                if (this.shapeGroup.myShapeGroup[i].myShape.selected) {
+                    this.shapeGroup.myShapeGroup[i].myTag.push(this.currentTag);
+                    for (let j = 0; j < this.shapeGroup.myShapeGroup[i].myTag.length; j++) {
+                        console.log(this.shapeGroup.myShapeGroup[i].myTag[j]);
+                    }
+
+                }
+            }
+        }
     }
 
     //04
