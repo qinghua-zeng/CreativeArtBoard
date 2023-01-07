@@ -82,7 +82,24 @@ window.onload = function() {
         dvdCurve.onMouseUp(event);
         sketchWindow.onMouseUp(event);
 
-        //dts.reGenerate(200, 200, 100, 100);
+        if (myPanel.sendSketchShapesButton.button1.hitTest(event.point)) {
+            console.log('send!');
+            sketchWindow.generateForSend(); //添加图形到 shapesForSend
+
+            //sketchWindow.shapeGroup.myShapeGroup[0].myShape.scale(0.3);
+            //sketchWindow.shapesForSend.myShapeGroup[0].myShape.position([0], [0]);
+            //sketchWindow.shapeGroup.myShapeGroup[1].myShape.position = new Point(200, 200);
+
+
+            dvdCurve.receivePattern(sketchWindow.shapesForSend);
+            sketchWindow.shapesForSend.myShapeGroup.length = 0;
+
+            //sketchWindow.shapeGroup.myShapeGroup[0].myShape.scale(1.2);
+
+        }
+
+
+        //console.log('=====finish=====');
     }
 
     function mouseMove(event) {
@@ -97,6 +114,9 @@ window.onload = function() {
 
         dvdCurve.onKeyUp(event);
         sketchWindow.onKeyUp(event);
+
+
+
 
     }
 

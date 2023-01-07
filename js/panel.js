@@ -33,6 +33,10 @@ class panel {
             this.getTextButton = new mouseClickButton1(850, 680, 'get');
         }
 
+        //sendSketchWindow
+        this.sendSketchShapesButton = new mouseClickButton1(850, 480, 'send');
+
+
     }
 
     onMouseDown(event) {

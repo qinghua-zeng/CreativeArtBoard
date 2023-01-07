@@ -118,7 +118,7 @@ class smartShapeGroup {
         //01 初始化
         {
 
-            console.log('intial shapeGroup length: ' + this.myShapeGroup.length);
+            //console.log('intial shapeGroup length: ' + this.myShapeGroup.length);
             //tempShapeGroup.length = 0;
         }
 
@@ -204,14 +204,14 @@ class smartShapeGroup {
         //05 结束，打印最终变量
         {
             //this.tempShapeGroup.length = 0;
-            console.log('final shapeGroup length: ' + this.myShapeGroup.length);
+            //console.log('final shapeGroup length: ' + this.myShapeGroup.length);
         }
 
 
     }
 
 
-    //生成图形
+    //生成图形============================================
     generatePattern(bounds) {
 
         let xNum = 4;
@@ -230,9 +230,52 @@ class smartShapeGroup {
         }
     }
 
-    //
+    //基于传递进来的基本图形组（smartShapeGroup类） 生成复合图案 最终生成smartShapeGroup类============================================
+    generatePattern2(bounds, shapes) {
+
+
+        //console.log(bounds);
+        //console.log('shapes.myShapeGroup.length: ' + shapes.myShapeGroup.length);
+
+        for (let i = 0; i < shapes.myShapeGroup.length; i++) {
+            shapes.myShapeGroup[i].myShape.position = new Point(bounds._x, bounds._y);
+        }
+
+        let xNum = 5;
+        let yNum = 5;
+
+        let xSpace = bounds._width / (xNum - 1);
+        let ySpace = bounds._height / (yNum - 1);
+
+        //this.myShapeGroup = shapes.myShapeGroup; //完全接受传来的图形
+        for (let i = 0; i < shapes.myShapeGroup.length; i++) {
+            //this.pushNewShape();
+            for (let j = 0; j < xNum; j++) {
+                for (let k = 0; k < yNum; k++) {
+                    //this.pushNewShape(shapes.myShapeGroup[i].myShape);
+                    //this.myShapeGroup.push(shapes.myShapeGroup[i]);
+                    let temp = new smartShape(shapes.myShapeGroup[i].myShape.clone());
+                    temp.myShape.opacity = 0;
+                    shapes.myShapeGroup[i].myShape.opacity = 0;
+                    //console.log(shapes.myShapeGroup[i].myShape.position);
+                    //console.log(temp.myShape.position);
+                    temp.myShape.position = new Point((temp.myShape.position._x + (j * xSpace)), temp.myShape.position._y + (k * ySpace));
+                    this.myShapeGroup.push(temp);
+                    //temp.myShape.scale(0);
+                }
+            }
+        }
+
+        //console.log('this.myShapeGroup.length: ' + this.myShapeGroup.length);
+
+    }
+
+
+    //============================================
     pushNewShape(shape) {
         this.myShapeGroup.push(new smartShape(shape));
     }
 }
+
+
 //=================================================

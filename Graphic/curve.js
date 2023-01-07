@@ -27,6 +27,9 @@ class divideCurve {
             this.shapeGroup.myShapeGroup[0].myShape.fillColor = 'white';
             this.shapeGroup.myShapeGroup[0].myShape.strokeColor = 'black';
             this.shapeGroup.myShapeGroup[0].myShape.strokeWidth = 2;
+
+
+            this.shapesForSend = new smartShapeGroup();
         }
 
         //00.4存储状态的变量
@@ -158,12 +161,12 @@ class divideCurve {
 
                 //03-2-2 对shapeGroup的操作
                 this.itemSelect(event);
-                this.generatePattern(event);
+                this.generatePattern();
                 //this.displaySelectStatus();
             }
         }
 
-        console.log('=====finish=====');
+
     }
 
     onKeyUp(event) {
@@ -225,10 +228,10 @@ class divideCurve {
     }
 
     //0
-    generatePattern(event) {
+    generatePattern() {
         for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
 
-            this.shapeGroup.myShapeGroup[i].myShape.onDoubleClick = function(event) {
+            this.shapeGroup.myShapeGroup[i].myShape.onDoubleClick = function() {
 
                 let tempPattern = new smartShapeGroup();
                 tempPattern.generatePattern(this.shapeGroup.myShapeGroup[i].myShape.bounds);
@@ -242,6 +245,66 @@ class divideCurve {
         }
 
     }
+
+    //用于在sketchWindow里生成基本图形
+    generateForSend() {
+        //console.log('generateForSend');
+
+        for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
+            if (this.shapeGroup.myShapeGroup[i].myShape.selected) {
+                this.shapeGroup.myShapeGroup[i].myShape.selected = false;
+                //this.shapesForSend.myShapeGroup.push(this.shapeGroup.myShapeGroup[i].myShape);
+                this.shapesForSend.pushNewShape(this.shapeGroup.myShapeGroup[i].myShape.clone());
+
+
+                console.log('this.shapesForSend.myShapeGroup.length: ' + this.shapesForSend.myShapeGroup.length);
+            }
+
+
+        }
+        this.shapesForSend.myShapeGroup[0].myShape.selected = false;
+        //this.shapesForSend.myShapeGroup[0].myShape.position = new Point(200, 200);
+        //this.shapesForSend.myShapeGroup[0].myShape.fillColor = 'green';
+        //this.shapesForSend.myShapeGroup.length = 0;
+    }
+
+
+
+    //接受sketchWindow里生成的基本图形，并交给generatePattern2复制多个
+    receivePattern(shapes) {
+        for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
+
+
+            if (this.shapeGroup.myShapeGroup[i].myShape.selected) {
+                //console.log('receive!');
+                //console.log(shapes);
+
+                let tempPattern = new smartShapeGroup();
+                tempPattern.generatePattern2(this.shapeGroup.myShapeGroup[i].myShape.bounds, shapes);
+                this.shapeGroup.uniteSelectedShapes(tempPattern);
+                this.changeShapeGroupDisplay();
+            }
+
+            /* this.shapeGroup.myShapeGroup[i].myShape.onDoubleClick = function() {
+
+                let tempPattern = new smartShapeGroup();
+                tempPattern.generatePattern2(this.shapeGroup.myShapeGroup[i].myShape.bounds, shapes);
+
+                this.shapeGroup.uniteSelectedShapes(tempPattern);
+                this.changeShapeGroupDisplay();
+
+
+            }.bind(this); */
+
+        }
+
+        //this.shapesForSend.myShapeGroup.length = 0;
+
+    }
+
+
+
+
 
     //0
     displaySelectStatus() {
