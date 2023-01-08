@@ -129,19 +129,20 @@ class divideCurve {
                     //console.log('dragged');
                     let pathSmartShapeGroup = new smartShapeGroup();
                     //03-1-2.1 对刚画完路径的简化处理
-                    {
-                        //path的生成
-                        {
-                            this.path.closed = true;
-                            this.path.simplify(this.simplifyLevel); //精简路径
-                            this.path.selected = false; //重要，防止生成结果有选择边界
-                            pathSmartShapeGroup.myShapeGroup.push(new smartShape(this.path.clone()));
-                        }
 
+                    //path的生成
+                    {
+                        this.path.closed = true;
+                        this.path.simplify(this.simplifyLevel); //精简路径
+                        this.path.selected = false; //重要，防止生成结果有选择边界
+                        pathSmartShapeGroup.myShapeGroup.push(new smartShape(this.path.clone()));
                     }
+
+
 
                     //03-1-2.3 进行相交运算
                     this.shapeGroup.uniteSelectedShapes(pathSmartShapeGroup); //对this.shapeGroup中图形的修改
+                    this.changeShapeGroupDisplay('randomColor', 'black', 0);
 
                     this.mouseDragged = false;
                 }
@@ -153,6 +154,7 @@ class divideCurve {
                     //this.path.remove(); //清空新画路径
                     this.mouseDragged = false;
                 }
+
                 //03-1-2.4 最后处理pathShape 
                 {
 
@@ -168,7 +170,7 @@ class divideCurve {
 
                 //03-2-2 对shapeGroup的操作
                 this.itemSelect(event);
-                this.generatePattern();
+                //this.generatePattern();
                 //this.displaySelectStatus();
             }
         }
@@ -210,15 +212,28 @@ class divideCurve {
     }
 
     //0
-    changeShapeGroupDisplay() {
+    changeShapeGroupDisplay(color, strokeColor, strokeWidth) {
         for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
-            //this.shapeGroup.myShapeGroup[i].myShape.fillColor = globalColor();
-            this.shapeGroup.myShapeGroup[i].myShape.strokeWidth = 0;
-            //this.shapeGroup.myShapeGroup[i].myShape.strokeColor = 'black';
-            //this.shapeGroup.myShapeGroup[i].myShape.opacity = 1;
-            //this.shapeGroup.myShapeGroup[i].myShape.scale(1);
+            if (color == 'randomColor') {
+
+                this.shapeGroup.myShapeGroup[i].myShape.fillColor = globalColor();
+                //this.shapeGroup.myShapeGroup[i].myShape.fillColor = 'green';
+
+            } else if (color == 'noChange') {
+
+            } else {
+                this.shapeGroup.myShapeGroup[i].myShape.fillColor = color;
+            }
+
+            this.shapeGroup.myShapeGroup[i].myShape.strokeWidth = strokeWidth;
+            this.shapeGroup.myShapeGroup[i].myShape.strokeColor = strokeColor
+                //this.shapeGroup.myShapeGroup[i].myShape.opacity = 1;
+                //this.shapeGroup.myShapeGroup[i].myShape.scale(1);
         }
+
+
     }
+
 
     //0
     itemSelect(event) {
@@ -263,8 +278,11 @@ class divideCurve {
             if (this.shapeGroup.myShapeGroup[i].myShape.selected) { //只有某个图形被选择才会生成图形
                 this.shapeGroup.myShapeGroup[i].myShape.selected = false;
                 //this.shapesForSend.myShapeGroup.push(this.shapeGroup.myShapeGroup[i].myShape);
-                this.shapesForSend.pushNewShape(this.shapeGroup.myShapeGroup[i].myShape.clone()); //把这个被选择的图形加到临时变量shapesForSend里
 
+                let temp = this.shapeGroup.myShapeGroup[i].myShape.clone()
+                temp.position = new Point(0, 0);
+                this.shapesForSend.pushNewShape(temp.clone()); //把这个被选择的图形加到临时变量shapesForSend里
+                temp.remove();
 
                 //console.log('this.shapesForSend.myShapeGroup.length: ' + this.shapesForSend.myShapeGroup.length);
             }
@@ -292,7 +310,7 @@ class divideCurve {
                 let tempPattern = new smartShapeGroup(); //临时变量存放生成的pattern
                 tempPattern.generatePattern2(this.shapeGroup.myShapeGroup[i].myShape.bounds, shapes); //基于输入的图形
                 this.shapeGroup.uniteSelectedShapes(tempPattern); //和全体图形相交运算
-                this.changeShapeGroupDisplay();
+                //this.changeShapeGroupDisplay();
             }
 
 

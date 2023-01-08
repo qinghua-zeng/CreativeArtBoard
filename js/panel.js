@@ -186,13 +186,5 @@ class panel {
         }
     }
 
-    inputText() {
-        //var textbox = document.getElementById('textbox');
-
-        textbox1.addEventListener('input', function() {
-            //var textbox = document.getElementById('textbox');
-
-        }.bind(this));
-    }
 
 }

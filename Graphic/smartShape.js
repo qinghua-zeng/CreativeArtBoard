@@ -116,7 +116,6 @@ class smartShapeGroup {
         let tempShapeGroup = new Array;
         let ifAnySelectedShape = false;
         //01 初始化
-        console.log('doing uniteSelectedShapes');
         console.log('intial shapeGroup length: ' + this.myShapeGroup.length);
 
         //02 图形的布尔运算
@@ -127,6 +126,7 @@ class smartShapeGroup {
                 //console.log('yes! i:' + i + ' selected');
                 //console.log(i);
                 this.myShapeGroup[i].myShape.selected = false;
+
                 //02-1 对每个原始图形进行判断
                 for (let j = 0; j < shapes.myShapeGroup.length; j++) { //遍历【输入】图形
 
@@ -164,23 +164,18 @@ class smartShapeGroup {
                             gg.remove();
                         }
 
-                        shapes.myShapeGroup[j].myShape.remove();
+                        shapes.myShapeGroup[j].myShape.remove(); //清除输入路径缓存，不然在ai文件背后有透明度为0的多余路径
 
                     }
 
                     //02-1-2 
                     else { //
                         //console.log('No!  i:' + i + '  j:' + j);
+                        shapes.myShapeGroup[j].myShape.remove(); //清除输入路径缓存，不然在ai文件背后有透明度为0的多余路径
                     }
 
                 }
             }
-        }
-
-        if (ifAnySelectedShape) {
-            console.log('did uniteSelectedShapes');
-        } else {
-            console.log('no selected shape, not doing anything! ');
         }
 
         //03 把所有的【相交】运算结果都给到 this.myShapeGroup
@@ -199,14 +194,20 @@ class smartShapeGroup {
             this.myShapeGroup[i].myShape.seleted = false;
             //this.myShapeGroup[i].myShape.fillColor = globalColor();
             //this.myShapeGroup[i].myShape.fillColor = 'red';
-            this.myShapeGroup[i].myShape.strokeColor = 'black';
-            this.myShapeGroup[i].myShape.strokeWidth = 0;
+            //this.myShapeGroup[i].myShape.strokeColor = 'black';
+            //this.myShapeGroup[i].myShape.strokeWidth = 0;
             //this.myShapeGroup[i].myShape.opacity = 0.8;
         }
 
         //05 结束，打印最终变量
-        console.log('final shapeGroup length: ' + this.myShapeGroup.length);
-
+        {
+            console.log('final shapeGroup length: ' + this.myShapeGroup.length);
+            if (ifAnySelectedShape) {
+                console.log('did uniteSelectedShapes()');
+            } else {
+                console.log('no selected shape, not doing anything! ');
+            }
+        }
     }
 
 
@@ -235,9 +236,15 @@ class smartShapeGroup {
 
         //console.log(bounds);
         //console.log('shapes.myShapeGroup.length: ' + shapes.myShapeGroup.length);
+        let positionArray = new Array;
 
         for (let i = 0; i < shapes.myShapeGroup.length; i++) {
-            shapes.myShapeGroup[i].myShape.position = new Point(bounds._x, bounds._y);
+            //positionArray.push(new Point())
+        }
+
+
+        for (let i = 0; i < shapes.myShapeGroup.length; i++) {
+            shapes.myShapeGroup[i].myShape.position = new Point(bounds._x + shapes.myShapeGroup[i].myShape.position._x, bounds._y + shapes.myShapeGroup[i].myShape.position._y);
         }
 
         let xNum = 5;
@@ -256,6 +263,7 @@ class smartShapeGroup {
                     let temp = new smartShape(shapes.myShapeGroup[i].myShape.clone());
                     temp.myShape.opacity = 0;
                     shapes.myShapeGroup[i].myShape.opacity = 0; //这个把复制的图形全部隐藏
+                    //shapes.myShapeGroup[i].myShape.remove();
                     //console.log(shapes.myShapeGroup[i].myShape.position);
                     //console.log(temp.myShape.position);
                     temp.myShape.position = new Point((temp.myShape.position._x + (j * xSpace)), temp.myShape.position._y + (k * ySpace));
@@ -266,6 +274,11 @@ class smartShapeGroup {
             }
         }
 
+        for (let i = 0; i < shapes.myShapeGroup.length; i++) {
+            shapes.myShapeGroup[i].myShape.remove();
+        }
+
+        console.log('did generatePattern2()');
         //console.log('this.myShapeGroup.length: ' + this.myShapeGroup.length);
 
     }

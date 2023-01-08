@@ -9,20 +9,16 @@ window.onload = function() {
 
     //01 创建画布
     paper.setup('myCanvas'); //01 
+
     //02 创建我的鼠标事件,myMouseEvent 必须是全局变量
     myMouseEvent = new Tool(); //02 
-    //myKeyEvent = new Tool();
 
     //绘制界面
     {
-        //globalWidth = 900;
-        //globalHeight = 500;
-        //fx(0, 0, globalWidth, globalHeight); //03
         let UI = new Path.Rectangle(0, 0, 900, 700);
         UI.strokeColor = 'black';
         UI.fillColor = 'grey';
     }
-
 
     //声明变量
     {
@@ -34,7 +30,6 @@ window.onload = function() {
         //dts = new dots();
 
     }
-
 
     //声明函数
     {
@@ -48,7 +43,6 @@ window.onload = function() {
 
         //04 创建显示文字定义模块===================================
     }
-
 
     //02 实时刷新模块，所有需要实时刷新的内容都在这
     function draw(event) {
@@ -64,50 +58,41 @@ window.onload = function() {
 
         dvdCurve.drawing = myPanel.status;
         dvdCurve.simplifyLevel = myPanel.simplifyLevel; //
+
         dvdCurve.onMouseDown(event);
         sketchWindow.onMouseDown(event);
 
 
     }
 
-    myPanel.inputText();
-
     function mouseDrag(event) {
         dvdCurve.onMouseDrag(event);
         sketchWindow.onMouseDrag(event);
     }
 
+    //全局mouseUp用于在不同的类之间通信
     function mouseUp(event) {
 
         dvdCurve.onMouseUp(event);
         sketchWindow.onMouseUp(event);
 
-        //发送图形
+        //从sketchWindow发送图形
         if (myPanel.sendSketchShapesButton.button1.hitTest(event.point)) {
-            //console.log('send!');
+
             sketchWindow.generateForSend(); //添加图形到 shapesForSend
-
-            //sketchWindow.shapeGroup.myShapeGroup[0].myShape.scale(0.3);
-            //sketchWindow.shapesForSend.myShapeGroup[0].myShape.position([0], [0]);
-            //sketchWindow.shapeGroup.myShapeGroup[1].myShape.position = new Point(200, 200);
-
-
             dvdCurve.receivePattern(sketchWindow.shapesForSend);
             sketchWindow.shapesForSend.myShapeGroup.length = 0;
-
-            dvdCurve.shapeGroup.myShapeGroup[5].myShape.fillColor = 'black';
-            dvdCurve.changeShapeGroupDisplay();
-            //sketchWindow.shapeGroup.myShapeGroup[0].myShape.scale(1.2);
+            dvdCurve.changeShapeGroupDisplay('noChange', 'red', 0);
 
         }
 
-        //接受svg
+        //接受svg图形
         if (myPanel.getTextButton.button1.hitTest(event.point)) {
-            //console.log(textbox1.value);
+
+            dvdCurve.drawing = 'svg'; //首先切换绘图模式，以免执行其他模式代码
 
             let svg = textbox1.value;
             let group = project.importSVG(svg);
-
 
             //将这个svg group转换成smartShapeGroup格式
             let tempSmartShapeGroup = new smartShapeGroup();
@@ -115,10 +100,6 @@ window.onload = function() {
                 tempSmartShapeGroup.pushNewShape(group._children[i]);
             }
 
-            //tempSmartShapeGroup.myShapeGroup[0].myShape.fillColor = 'green';
-            //tempSmartShapeGroup.myShapeGroup[0].myShape.scale(1.6);
-
-            //console.log(tempSmartShapeGroup);
             //dvdCurve.shapeGroup.uniteSelectedShapes(tempSmartShapeGroup);
             dvdCurve.receivePattern(tempSmartShapeGroup);
 
@@ -127,12 +108,11 @@ window.onload = function() {
                 tempSmartShapeGroup.myShapeGroup[i].myShape.remove();
             }
 
-            dvdCurve.changeShapeGroupDisplay();
+            dvdCurve.changeShapeGroupDisplay('noChange', 'red', 0);
+        } //if 结束
 
-        }
 
-
-        //console.log('=====finish=====');
+        console.log('=====finish=====');
     }
 
     function mouseMove(event) {
@@ -154,24 +134,6 @@ window.onload = function() {
     }
 
 
-
-    //console.log(textbox);
-
-
-
-
-
-
-
-
-
-    /* function keyUp(event) {
-        // When a key is released, set the content of the text item:
-        dvdCurve.onKeyUp(event);
-    } */
-
-
-    // Create a centered text item at the center of the view:
 
     //在这上面写代码=================================================================
     //}
