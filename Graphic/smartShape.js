@@ -114,31 +114,26 @@ class smartShapeGroup {
     uniteSelectedShapes(shapes) {
 
         let tempShapeGroup = new Array;
-
+        let ifAnySelectedShape = false;
         //01 初始化
-        //console.log('intial shapeGroup length: ' + this.myShapeGroup.length);
+        console.log('doing uniteSelectedShapes');
+        console.log('intial shapeGroup length: ' + this.myShapeGroup.length);
 
         //02 图形的布尔运算
         for (let i = 0; i < this.myShapeGroup.length; i++) {
-            //console.log(i);
-            //console.log(this.myShapeGroup[i].myShape.selected);
-            //this.myShapeGroup[i].myShape.seleted = 'false';
-            if (this.myShapeGroup[i].myShape.selected == true) {
+
+            if (this.myShapeGroup[i].myShape.selected == true) { //遍历【基本】图形
+                ifAnySelectedShape = true;
                 //console.log('yes! i:' + i + ' selected');
                 //console.log(i);
                 this.myShapeGroup[i].myShape.selected = false;
                 //02-1 对每个原始图形进行判断
-                for (let j = 0; j < shapes.myShapeGroup.length; j++) {
+                for (let j = 0; j < shapes.myShapeGroup.length; j++) { //遍历【输入】图形
 
                     //02-1-1 只有与输入图形相交或包含的原图形才会被选择 进行布尔运算
                     if (this.myShapeGroup[i].myShape.intersects(shapes.myShapeGroup[j].myShape) || this.myShapeGroup[i].myShape.contains(shapes.myShapeGroup[j].myShape.position)) {
 
-
-                        //01 初始化
-                        {
-                            //console.log('yes! i:' + i + '  j:' + j);
-                            //this.myShapeGroup[i].myShape.seleted = true;
-                        }
+                        //console.log('yes! i:' + i + '  j:' + j);
 
                         //02 布尔运算,
                         {
@@ -146,7 +141,7 @@ class smartShapeGroup {
 
                             let gg = shapes.myShapeGroup[j].myShape.intersect(this.myShapeGroup[i].myShape);
 
-                            gg.fillColor = 'green';
+                            //gg.fillColor = 'green';
                             gg.opacity = 1;
                             //在this.tempShapeGroup创建新的smartShape类
                             //this.tempShapeGroup.push(new smartShape());
@@ -155,12 +150,12 @@ class smartShapeGroup {
                             //运算结果给到 this.tempShapeGroup
                             //tempShapeGroup[tempShapeGroup.length - 1].myShape = gg.clone();
 
-                            kk.fillColor = 'black';
+                            //kk.fillColor = 'black';
 
                             this.myShapeGroup[i].myShape.scale(0); //清空缓存
                             this.myShapeGroup[i].myShape.remove();
 
-                            kk.fillColor = 'red';
+                            //kk.fillColor = 'red';
                             this.myShapeGroup[i].myShape = kk.clone(); //把参与运算的图形变成相减后的结果
 
                             kk.scale(0);
@@ -168,6 +163,8 @@ class smartShapeGroup {
                             gg.scale(0);
                             gg.remove();
                         }
+
+                        shapes.myShapeGroup[j].myShape.remove();
 
                     }
 
@@ -178,16 +175,21 @@ class smartShapeGroup {
 
                 }
             }
+        }
 
-
+        if (ifAnySelectedShape) {
+            console.log('did uniteSelectedShapes');
+        } else {
+            console.log('no selected shape, not doing anything! ');
         }
 
         //03 把所有的【相交】运算结果都给到 this.myShapeGroup
         for (let i = 0; i < tempShapeGroup.length; i++) {
             tempShapeGroup[i].myShape.seleted = false;
 
-            tempShapeGroup[i].myShape.fillColor = 'yellow'; //只针对相交产生的图形
+            //tempShapeGroup[i].myShape.fillColor = 'yellow'; //只针对相交产生的图形
             this.myShapeGroup.push(tempShapeGroup[i]);
+            //tempShapeGroup[i].myShape.remove();
         }
 
         //04 myShapeGroup显示设置,注意这个是针对所有的图形
@@ -203,7 +205,7 @@ class smartShapeGroup {
         }
 
         //05 结束，打印最终变量
-        //console.log('final shapeGroup length: ' + this.myShapeGroup.length);
+        console.log('final shapeGroup length: ' + this.myShapeGroup.length);
 
     }
 
@@ -257,8 +259,9 @@ class smartShapeGroup {
                     //console.log(shapes.myShapeGroup[i].myShape.position);
                     //console.log(temp.myShape.position);
                     temp.myShape.position = new Point((temp.myShape.position._x + (j * xSpace)), temp.myShape.position._y + (k * ySpace));
-                    this.myShapeGroup.push(temp);
-                    //temp.myShape.scale(0);
+                    this.myShapeGroup.push(new smartShape(temp.myShape.clone()));
+                    temp.myShape.scale(0);
+                    temp.myShape.remove();
                 }
             }
         }

@@ -82,6 +82,7 @@ window.onload = function() {
         dvdCurve.onMouseUp(event);
         sketchWindow.onMouseUp(event);
 
+        //发送图形
         if (myPanel.sendSketchShapesButton.button1.hitTest(event.point)) {
             //console.log('send!');
             sketchWindow.generateForSend(); //添加图形到 shapesForSend
@@ -97,6 +98,36 @@ window.onload = function() {
             dvdCurve.shapeGroup.myShapeGroup[5].myShape.fillColor = 'black';
             dvdCurve.changeShapeGroupDisplay();
             //sketchWindow.shapeGroup.myShapeGroup[0].myShape.scale(1.2);
+
+        }
+
+        //接受svg
+        if (myPanel.getTextButton.button1.hitTest(event.point)) {
+            //console.log(textbox1.value);
+
+            let svg = textbox1.value;
+            let group = project.importSVG(svg);
+
+
+            //将这个svg group转换成smartShapeGroup格式
+            let tempSmartShapeGroup = new smartShapeGroup();
+            for (let i = 0; i < group._children.length; i++) {
+                tempSmartShapeGroup.pushNewShape(group._children[i]);
+            }
+
+            //tempSmartShapeGroup.myShapeGroup[0].myShape.fillColor = 'green';
+            //tempSmartShapeGroup.myShapeGroup[0].myShape.scale(1.6);
+
+            //console.log(tempSmartShapeGroup);
+            //dvdCurve.shapeGroup.uniteSelectedShapes(tempSmartShapeGroup);
+            dvdCurve.receivePattern(tempSmartShapeGroup);
+
+            //取消输入图形的显示
+            for (let i = 0; i < tempSmartShapeGroup.myShapeGroup.length; i++) {
+                tempSmartShapeGroup.myShapeGroup[i].myShape.remove();
+            }
+
+            dvdCurve.changeShapeGroupDisplay();
 
         }
 

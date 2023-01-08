@@ -212,8 +212,8 @@ class divideCurve {
     //0
     changeShapeGroupDisplay() {
         for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
-            this.shapeGroup.myShapeGroup[i].myShape.fillColor = globalColor();
-            //this.shapeGroup.myShapeGroup[i].myShape.strokeWidth = 2;
+            //this.shapeGroup.myShapeGroup[i].myShape.fillColor = globalColor();
+            this.shapeGroup.myShapeGroup[i].myShape.strokeWidth = 0;
             //this.shapeGroup.myShapeGroup[i].myShape.strokeColor = 'black';
             //this.shapeGroup.myShapeGroup[i].myShape.opacity = 1;
             //this.shapeGroup.myShapeGroup[i].myShape.scale(1);
@@ -295,16 +295,6 @@ class divideCurve {
                 this.changeShapeGroupDisplay();
             }
 
-            /* this.shapeGroup.myShapeGroup[i].myShape.onDoubleClick = function() {
-
-                let tempPattern = new smartShapeGroup();
-                tempPattern.generatePattern2(this.shapeGroup.myShapeGroup[i].myShape.bounds, shapes);
-
-                this.shapeGroup.uniteSelectedShapes(tempPattern);
-                this.changeShapeGroupDisplay();
-
-
-            }.bind(this); */
 
         }
 
