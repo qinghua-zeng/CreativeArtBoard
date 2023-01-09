@@ -233,25 +233,48 @@ class smartShapeGroup {
     //基于传递进来的基本图形组（smartShapeGroup类） 生成复合图案 最终生成smartShapeGroup类============================================
     generatePattern2(bounds, shapes) {
 
+        let xNum = 3;
+        let yNum = 3;
 
-        //console.log(bounds);
-        //console.log('shapes.myShapeGroup.length: ' + shapes.myShapeGroup.length);
-        let positionArray = new Array;
+        let xSpace;
+        let ySpace;
 
+        let scaleShape = 0.8;
+        //获得输入图形的最大bounds
+
+        //缩放图形
         for (let i = 0; i < shapes.myShapeGroup.length; i++) {
-            //positionArray.push(new Point())
+            //shapes.myShapeGroup[i].myShape.scale(1.4);
+        }
+
+        let tempGroup = new Group();
+        for (let i = 0; i < shapes.myShapeGroup.length; i++) {
+            tempGroup.addChildren([shapes.myShapeGroup[i].myShape]);
         }
 
 
+
+
+        //确定坐标
         for (let i = 0; i < shapes.myShapeGroup.length; i++) {
+            console.log(shapes.myShapeGroup[i].myShape.position);
+            console.log(shapes.myShapeGroup[i].myShape.bounds);
             shapes.myShapeGroup[i].myShape.position = new Point(bounds._x + shapes.myShapeGroup[i].myShape.position._x, bounds._y + shapes.myShapeGroup[i].myShape.position._y);
         }
 
-        let xNum = 5;
-        let yNum = 5;
+        //tempGroup.scale(0.6);
 
-        let xSpace = bounds._width / (xNum - 1);
-        let ySpace = bounds._height / (yNum - 1);
+        /* //确定坐标
+        for (let i = 0; i < shapes.myShapeGroup.length; i++) {
+            console.log(shapes.myShapeGroup[i].myShape.position);
+            console.log(shapes.myShapeGroup[i].myShape.bounds);
+            shapes.myShapeGroup[i].myShape.position = new Point(bounds._x + shapes.myShapeGroup[i].myShape.position._x - shapes.myShapeGroup[i].myShape.bounds._x, bounds._y + shapes.myShapeGroup[i].myShape.position._y - shapes.myShapeGroup[i].myShape.bounds._y);
+        } */
+
+
+
+        xSpace = (bounds._width - tempGroup.bounds._width) / (xNum - 1);
+        ySpace = (bounds._height - tempGroup.bounds._height) / (yNum - 1);
 
         //this.myShapeGroup = shapes.myShapeGroup; //完全接受传来的图形
         for (let i = 0; i < shapes.myShapeGroup.length; i++) {
@@ -263,9 +286,6 @@ class smartShapeGroup {
                     let temp = new smartShape(shapes.myShapeGroup[i].myShape.clone());
                     temp.myShape.opacity = 0;
                     shapes.myShapeGroup[i].myShape.opacity = 0; //这个把复制的图形全部隐藏
-                    //shapes.myShapeGroup[i].myShape.remove();
-                    //console.log(shapes.myShapeGroup[i].myShape.position);
-                    //console.log(temp.myShape.position);
                     temp.myShape.position = new Point((temp.myShape.position._x + (j * xSpace)), temp.myShape.position._y + (k * ySpace));
                     this.myShapeGroup.push(new smartShape(temp.myShape.clone()));
                     temp.myShape.scale(0);

@@ -30,11 +30,12 @@ class panel {
 
             this.currentY = 30;
 
-            this.getTextButton = new mouseClickButton1(850, 680, 'get');
+            this.getTextButton = new mouseClickButton1(1100, 880, 'get');
+            this.getShapeButton = new mouseClickButton1(1030, 880, 'replace');
         }
 
         //sendSketchWindow
-        this.sendSketchShapesButton = new mouseClickButton1(850, 480, 'send');
+        this.sendSketchShapesButton = new mouseClickButton1(1100, 430, 'send');
 
 
     }

@@ -4,8 +4,6 @@ paper.install(window);
 //paperScope.install(scope);
 
 window.onload = function() {
-    //00 所有预先设置部分
-    //paperScope.install(scope);
 
     //01 创建画布
     paper.setup('myCanvas'); //01 
@@ -13,9 +11,12 @@ window.onload = function() {
     //02 创建我的鼠标事件,myMouseEvent 必须是全局变量
     myMouseEvent = new Tool(); //02 
 
+    var layer2 = new Layer();
+
+
     //绘制界面
     {
-        let UI = new Path.Rectangle(0, 0, 900, 700);
+        let UI = new Path.Rectangle(0, 0, 1150, 900);
         UI.strokeColor = 'black';
         UI.fillColor = 'grey';
     }
@@ -24,14 +25,34 @@ window.onload = function() {
     {
         saveSVG = new saveSVG();
         this.myPanel = new panel;
-        dvdCurve = new divideCurve(50, 20, 500, 650); //声明一个变量
-        sketchWindow = new divideCurve(580, 20, 300, 400); //声明一个变量
-
-        //dts = new dots();
-
+        dvdCurve = new divideCurve(50, 20, 800, 800); //声明一个变量
+        sketchWindow = new divideCurve(880, 20, 250, 400); //声明一个变量
     }
 
-    //声明函数
+    //图层操作
+    {
+        //console.log(project.layers);
+
+        var secondPath = new Path.Circle(new Point(1000, 550), 65);
+        secondPath.fillColor = 'green';
+
+        //secondPath.bounds._width = secondPath.bounds._width - 50;
+        //console.log(secondPath.bounds);
+        secondPath.moveTo(project.layers[1]);
+        //console.log(project.layers[1].name);
+        //project.layers
+
+
+        //console.log(project.layers[1]._children);
+
+        //project.layers[1]._children[0].scale(2);
+
+        //saveSVG.saveFile();
+        //console.log(saveSVG.svgData);
+    }
+
+
+    //声明鼠标键盘事件函数
     {
         view.onFrame = draw; //draw()函数在draw.js文件里，负责实时刷新视图
         myMouseEvent.onMouseDown = mouseDown; //mouseDown
@@ -49,10 +70,11 @@ window.onload = function() {
         //project.clear();
         dvdCurve.draw();
         sketchWindow.draw();
-        saveSVG.draw(event);
+        //saveSVG.draw(event);
 
     }
 
+    //0
     function mouseDown(event) {
         myPanel.onMouseDown(event); //先更新myPanel的status变量
 
@@ -65,6 +87,7 @@ window.onload = function() {
 
     }
 
+    //0
     function mouseDrag(event) {
         dvdCurve.onMouseDrag(event);
         sketchWindow.onMouseDrag(event);
@@ -109,17 +132,66 @@ window.onload = function() {
             }
 
             dvdCurve.changeShapeGroupDisplay('noChange', 'red', 0);
+
+
         } //if 结束
 
+
+        //替换基本图形
+        if (myPanel.getShapeButton.button1.hitTest(event.point)) {
+
+            dvdCurve.drawing = 'svg'; //首先切换绘图模式，以免执行其他模式代码
+
+            let svg = textbox1.value;
+            let group = project.importSVG(svg);
+
+            //将这个svg group转换成smartShapeGroup格式
+            let tempSmartShapeGroup = new smartShapeGroup();
+            for (let i = 0; i < group._children.length; i++) {
+                tempSmartShapeGroup.pushNewShape(group._children[i]);
+            }
+
+            dvdCurve.shapeGroup.uniteSelectedShapes(tempSmartShapeGroup);
+            //dvdCurve.receivePattern(tempSmartShapeGroup);
+
+            //取消输入图形的显示
+            for (let i = 0; i < tempSmartShapeGroup.myShapeGroup.length; i++) {
+                tempSmartShapeGroup.myShapeGroup[i].myShape.remove();
+            }
+
+            dvdCurve.changeShapeGroupDisplay('noChange', 'red', 0);
+
+
+        } //if 结束
+
+
+
+        //导出svg
+        {
+            for (let i = 0; i < dvdCurve.shapeGroup.myShapeGroup.length; i++) {
+                //console.log(dvdCurve.shapeGroup.myShapeGroup[i].myShape);
+                //dvdCurve.shapeGroup.myShapeGroup[i].myShape.moveTo(project.layers[1]);
+            }
+
+            var svg = project.exportSVG(project.layers[1]);
+            //console.log(svg.outerHTML);
+            //textbox1.value = svg.outerHTML;
+            //textbox1.value = dvdCurve.shapeGroup.myShapeGroup[i].myShape;
+
+            saveSVG.svgData = svg;
+            saveSVG.onMouseUp(event)
+        }
 
         console.log('=====finish=====');
     }
 
+    //0
     function mouseMove(event) {
         dvdCurve.onMouseMove(event);
         sketchWindow.onMouseMove(event);
     }
 
+    //0
     function keyUp(event) {
         //console.log('key up!');
         myPanel.onKeyUp(event);
