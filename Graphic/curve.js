@@ -169,9 +169,15 @@ class divideCurve {
             if (this.drawing == 'select') {
 
                 //03-2-2 对shapeGroup的操作
-                this.itemSelect(event);
+                this.itemSelect1(event);
                 //this.generatePattern();
                 //this.displaySelectStatus();
+                /* if (this.ifIn && event.item) {
+                    event.item.selected = true;
+                    console.log(event.item);
+                } else if (this.ifIn && event.item == false) {
+                    event.item.selected = false;
+                } */
             }
         }
 
@@ -237,19 +243,43 @@ class divideCurve {
 
     //0
     itemSelect(event) {
-        for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
-            if (this.ifIn) { //console.log(i);
+        if (this.ifIn) { //console.log(i);
+
+            for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
+
                 if (this.shapeGroup.myShapeGroup[i].myShape.hitTest(event.point)) {
                     this.shapeGroup.myShapeGroup[i].myShape.selected = true;
-
+                    console.log('selected');
 
                 } else {
                     this.shapeGroup.myShapeGroup[i].myShape.selected = false;
+                    console.log('no selected');
                 }
             }
 
         }
     }
+
+    //0
+    itemSelect2(event) {
+        if (this.ifIn) { //console.log(i);
+
+            if (event.item) {
+                event.item.selected = true;
+                console.log('selected');
+            } else {
+                for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
+                    this.shapeGroup.myShapeGroup[i].myShape.selected = false;
+                    console.log('no selected');
+                }
+
+            }
+
+        }
+    }
+
+
+
 
     //0
     generatePattern() {
@@ -308,7 +338,7 @@ class divideCurve {
 
 
                 let tempPattern = new smartShapeGroup(); //临时变量存放生成的pattern
-                tempPattern.generatePattern2(this.shapeGroup.myShapeGroup[i].myShape.bounds, shapes); //基于输入的图形
+                tempPattern.generatePattern3(this.shapeGroup.myShapeGroup[i].myShape.bounds, shapes); //基于输入的图形
                 this.shapeGroup.uniteSelectedShapes(tempPattern); //和全体图形相交运算
                 //this.changeShapeGroupDisplay();
             }

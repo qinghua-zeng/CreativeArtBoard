@@ -13,6 +13,106 @@ window.onload = function() {
 
     var layer2 = new Layer();
 
+    //导入本地svg, 在需要用到这个图形的地方再加载它，必须在它的回调函数里操作外面的对象
+    {
+        var kk = 'kkkk';
+        var localSvg = project.importSVG('svg files/heart.svg', {
+            expandShapes: true, // Expand shapes to paths
+            onLoad: function(item) {
+                // Do something with the imported item
+                localSvg = item;
+                //console.log(kk); //说明它可以访问外面的对象
+                //console.log(item.position);
+                kk = 'jfdij'; //说明它可以访问外面的对象，并且互动
+                //console.log(kk);
+
+                item.position = new Point(1050, 700);
+                //item.position = new Point(0, 0);
+            }
+        });
+        //console.log(kk);
+        //var localSvg = project.importSVG('svg files/heart.svg');
+        //console.log(localSvg);
+        //localSvg.position = new Point(0, 0);
+        //localSvg.moveTo(new Point(600, 400));
+    }
+
+    {
+        {
+            /* async function readFile(file) {
+                const result = await $.ajax({
+                    url: file,
+                    dataType: 'text',
+                });
+                //console.log(result);
+
+                return result;
+            }
+
+
+            const data = readFile('heart.svg').then(result => { console.log(result); return result; });
+            console.log(data);
+            //var localSvg = project.importSVG(result);
+            //var localSvg = project.importSVG(data); */
+        }
+
+        {
+            /* function readFile(file) {
+                const reader = new FileReader();
+                reader.readAsText(file);
+                return reader.result;
+            }
+
+            const data = readFile('heart.svg');
+            console.log(data); */
+        }
+
+        //失败的研究
+        {
+            /* var ooo;
+
+            function loadSVG(url) {
+                return new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('GET', url);
+                    xhr.onload = () => resolve(xhr.responseText);
+                    xhr.onerror = () => reject(xhr.statusText);
+                    xhr.send();
+                });
+            }
+
+            // 使用示例
+            loadSVG('heart.svg')
+                .then(svg => {
+                    // 处理 SVG 数据
+                    ooo = svg;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+
+            //console.error(ooo); */
+        }
+
+        //失败的研究
+        {
+            /* let pp = $.ajax({
+                url: 'heart.svg',
+                dataType: 'text',
+
+                success: function(svg) {
+                    // 处理 SVG 数据
+                    console.log(svg);
+                    pp = svg;
+                    return svg;
+                }
+            });
+
+            console.log(pp); */
+
+        }
+    }
+
 
     //绘制界面
     {
@@ -27,6 +127,9 @@ window.onload = function() {
         this.myPanel = new panel;
         dvdCurve = new divideCurve(50, 20, 800, 800); //声明一个变量
         sketchWindow = new divideCurve(880, 20, 250, 400); //声明一个变量
+        dvdCurve.shapeGroup.updateBoundsAndPosition();
+        //console.log(dvdCurve.shapeGroup);
+
     }
 
     //图层操作
@@ -95,6 +198,8 @@ window.onload = function() {
 
     //全局mouseUp用于在不同的类之间通信
     function mouseUp(event) {
+        //var localSvg = project.importSVG('svg files/heart.svg');
+
 
         dvdCurve.onMouseUp(event);
         sketchWindow.onMouseUp(event);
@@ -116,6 +221,7 @@ window.onload = function() {
 
             let svg = textbox1.value;
             let group = project.importSVG(svg);
+            //console.log(group);
 
             //将这个svg group转换成smartShapeGroup格式
             let tempSmartShapeGroup = new smartShapeGroup();
@@ -182,7 +288,8 @@ window.onload = function() {
             saveSVG.onMouseUp(event)
         }
 
-        console.log('=====finish=====');
+
+        console.log('======= a mouse up cycle finished  =========');
     }
 
     //0

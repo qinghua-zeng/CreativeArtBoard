@@ -14,6 +14,8 @@ class smartShape {
 class smartShapeGroup {
     constructor() {
         this.myShapeGroup = new Array; //数组元素必须是smartShape类型
+        this.bounds;
+        this.position;
     }
 
     //原始图形与输入的图形进行相交运算
@@ -112,7 +114,7 @@ class smartShapeGroup {
     }
 
     uniteSelectedShapes(shapes) {
-
+        console.log('=== start doing uniteSelectedShapes()...');
         let tempShapeGroup = new Array;
         let ifAnySelectedShape = false;
         //01 初始化
@@ -203,9 +205,9 @@ class smartShapeGroup {
         {
             console.log('final shapeGroup length: ' + this.myShapeGroup.length);
             if (ifAnySelectedShape) {
-                console.log('did uniteSelectedShapes()');
+                console.log('=== done uniteSelectedShapes()');
             } else {
-                console.log('no selected shape, not doing anything! ');
+                console.log('=== no selected shape, not doing anything! ');
             }
         }
     }
@@ -303,11 +305,169 @@ class smartShapeGroup {
 
     }
 
+    //基于传递进来的基本图形组（smartShapeGroup类） 生成复合图案 最终生成smartShapeGroup类============================================
+    generatePattern3(bounds, shapes) {
+        console.log('=== start doing generatePattern3 ()...');
+
+        let originalBounds = shapes.getBounds();
+
+        //========================================================
+        let xNumMin = 2;
+        let xNumMax = 8;
+
+        let yNumMin = 2;
+        let yNumMax = 8;
+
+        let xNum = Math.round(xNumMin + (xNumMax - xNumMin) * Math.random());
+        let yNum = xNum;
+
+
+        let scaleMax = 0.3; //比例
+        let scaleMin = 0.7; //比例
+
+        let rotateMin = 0; //角度度数
+        let rotateMax = 180; //角度度数
+
+        let xOffset = 70;
+        let yOffset = 50;
+
+
+        // xSpace ySpace的计算 =====================================
+        let xSpace;
+        let ySpace;
+
+        {
+            if (xNum > 1) {
+                xSpace = (bounds._width - originalBounds._width) / (xNum - 1);
+            } else {
+                xSpace = 0;
+            }
+
+            if (yNum > 1) {
+                ySpace = (bounds._height - originalBounds._height) / (yNum - 1);
+            } else {
+                ySpace = 0;
+            }
+        }
+
+
+        for (let j = 0; j < xNum; j++) {
+            for (let k = 0; k < yNum; k++) {
+
+                let xOffsetRandom = xOffset * (-1) + xOffset * 2 * (Math.random());
+                let yOffsetRandom = yOffset * (-1) + yOffset * 2 * (Math.random());
+
+                //先调整位置
+                shapes.moveTo(new Point(originalBounds._width / 2 + bounds._x + j * xSpace + xOffsetRandom, originalBounds._height / 2 + k * ySpace + yOffsetRandom + bounds._y));
+
+                //随机角度
+                let rotateShape = rotateMin + (rotateMax - rotateMin) * Math.random();
+                shapes.rotate(rotateShape);
+
+                //随机缩放
+                let scaleShape = scaleMin + (scaleMax - scaleMin) * Math.random();
+                shapes.scale(scaleShape);
+
+
+
+                for (let i = 0; i < shapes.myShapeGroup.length; i++) {
+                    //获取子图形
+                    let temp = new smartShape(shapes.myShapeGroup[i].myShape.clone());
+                    temp.myShape.opacity = 0;
+                    shapes.myShapeGroup[i].myShape.opacity = 0; //这个把复制的图形全部隐藏
+                    this.myShapeGroup.push(new smartShape(temp.myShape.clone()));
+
+                    //temp.myShape.scale(0);
+                    temp.myShape.remove();
+                }
+
+                //恢复图形的原大小和角度
+                shapes.scale(1 / scaleShape);
+                shapes.rotate(rotateShape * (-1));
+
+                //恢复位置
+                shapes.moveTo(new Point(originalBounds._width / 2 + bounds._x + j * xSpace - xOffsetRandom, originalBounds._height / 2 + bounds._y + k * ySpace - yOffsetRandom));
+            }
+        }
+
+        for (let i = 0; i < shapes.myShapeGroup.length; i++) {
+            shapes.myShapeGroup[i].myShape.remove();
+        }
+
+        console.log('=== done generatePattern3()');
+        //console.log('this.myShapeGroup.length: ' + this.myShapeGroup.length);
+
+    }
+
 
     //============================================
     pushNewShape(shape) {
         this.myShapeGroup.push(new smartShape(shape));
     }
+
+    //====
+    updateBoundsAndPosition() {
+        let tempGroup = new Group();
+        for (let i = 0; i < this.myShapeGroup.length; i++) {
+            tempGroup.addChildren([this.myShapeGroup[i].myShape]);
+        }
+        this.bounds = tempGroup.bounds;
+        this.position = tempGroup.position;
+        //console.log(this.bounds);
+        //console.log(tempGroup.position);
+    }
+
+    getBounds() {
+        this.updateBoundsAndPosition();
+        //console.log(this.bounds);
+        //console.log(this.position);
+        return this.bounds;
+
+    }
+
+    rotate(angle) {
+        let tempGroup = new Group();
+        for (let i = 0; i < this.myShapeGroup.length; i++) {
+            tempGroup.addChildren([this.myShapeGroup[i].myShape]);
+        }
+        tempGroup.rotate(angle);
+    }
+
+    rotate2(angle) {
+        for (let i = 0; i < this.myShapeGroup.length; i++) {
+            //this.myShapeGroup[i].myShape
+        }
+
+    }
+
+    scale(percentage) {
+        let tempGroup = new Group();
+        for (let i = 0; i < this.myShapeGroup.length; i++) {
+            tempGroup.addChildren([this.myShapeGroup[i].myShape]);
+        }
+        tempGroup.scale(percentage);
+    }
+
+    moveTo(point) {
+        let tempGroup = new Group();
+        for (let i = 0; i < this.myShapeGroup.length; i++) {
+            tempGroup.addChildren([this.myShapeGroup[i].myShape]);
+        }
+        tempGroup.position = point;
+
+
+    }
+
+    move(x, y) {
+        let tempGroup = new Group();
+        for (let i = 0; i < this.myShapeGroup.length; i++) {
+            tempGroup.addChildren([this.myShapeGroup[i].myShape]);
+        }
+        tempGroup.position = new Point(tempGroup.position._x + x, tempGroup.position._y + y);
+        //console.log(tempGroup.position);
+        //console.log(new Point(x, y));
+    }
+
 }
 
 
