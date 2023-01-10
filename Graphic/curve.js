@@ -169,7 +169,7 @@ class divideCurve {
             if (this.drawing == 'select') {
 
                 //03-2-2 对shapeGroup的操作
-                this.itemSelect1(event);
+                this.itemSelect(event);
                 //this.generatePattern();
                 //this.displaySelectStatus();
                 /* if (this.ifIn && event.item) {
