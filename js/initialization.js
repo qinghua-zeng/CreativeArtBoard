@@ -15,7 +15,7 @@ window.onload = function() {
 
     //导入本地svg, 在需要用到这个图形的地方再加载它，必须在它的回调函数里操作外面的对象
     {
-        var kk = 'kkkk';
+        /* var kk = 'kkkk';
         var localSvg = project.importSVG('svg files/heart.svg', {
             expandShapes: true, // Expand shapes to paths
             onLoad: function(item) {
@@ -29,7 +29,7 @@ window.onload = function() {
                 item.position = new Point(1050, 700);
                 //item.position = new Point(0, 0);
             }
-        });
+        }); */
         //console.log(kk);
         //var localSvg = project.importSVG('svg files/heart.svg');
         //console.log(localSvg);
@@ -136,12 +136,12 @@ window.onload = function() {
     {
         //console.log(project.layers);
 
-        var secondPath = new Path.Circle(new Point(1000, 550), 65);
-        secondPath.fillColor = 'green';
+        //var secondPath = new Path.Circle(new Point(1000, 550), 65);
+        //secondPath.fillColor = 'green';
 
         //secondPath.bounds._width = secondPath.bounds._width - 50;
         //console.log(secondPath.bounds);
-        secondPath.moveTo(project.layers[1]);
+        //secondPath.moveTo(project.layers[1]);
         //console.log(project.layers[1].name);
         //project.layers
 
