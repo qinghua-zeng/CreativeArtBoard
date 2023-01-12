@@ -139,48 +139,56 @@ class smartShapeGroup {
 
                         //02 布尔运算,
                         {
-                            let kk = this.myShapeGroup[i].myShape.subtract(shapes.myShapeGroup[j].myShape);
+                            //subtractResult 获取基本图形减去输入图形的结果
+                            let subtractResult = this.myShapeGroup[i].myShape.subtract(shapes.myShapeGroup[j].myShape);
 
-                            let gg = shapes.myShapeGroup[j].myShape.intersect(this.myShapeGroup[i].myShape);
+                            //intersectResult 获取输入图形和基本图形的相交结果
+                            let intersectResult = shapes.myShapeGroup[j].myShape.intersect(this.myShapeGroup[i].myShape);
 
-                            //gg.fillColor = 'green';
-                            gg.opacity = 1;
+                            intersectResult.opacity = 1;
+
                             //在this.tempShapeGroup创建新的smartShape类
-                            //this.tempShapeGroup.push(new smartShape());
-                            tempShapeGroup.push(new smartShape(gg.clone()));
-
-                            //运算结果给到 this.tempShapeGroup
-                            //tempShapeGroup[tempShapeGroup.length - 1].myShape = gg.clone();
-
-                            //kk.fillColor = 'black';
+                            tempShapeGroup.push(new smartShape(intersectResult.clone()));
 
                             this.myShapeGroup[i].myShape.scale(0); //清空缓存
                             this.myShapeGroup[i].myShape.remove();
 
-                            //kk.fillColor = 'red';
-                            this.myShapeGroup[i].myShape = kk.clone(); //把参与运算的图形变成相减后的结果
+                            this.myShapeGroup[i].myShape = subtractResult.clone(); //把参与运算的图形变成相减后的结果
 
-                            kk.scale(0);
-                            kk.remove();
-                            gg.scale(0);
-                            gg.remove();
+
+
+                            //取消缓存显示
+                            {
+                                subtractResult.scale(0);
+                                subtractResult.remove();
+                                intersectResult.scale(0);
+                                intersectResult.remove();
+                            }
                         }
 
-                        shapes.myShapeGroup[j].myShape.remove(); //清除输入路径缓存，不然在ai文件背后有透明度为0的多余路径
+                        //shapes.myShapeGroup[j].myShape.remove(); //清除【输入路径】的缓存，不然在ai文件背后有透明度为0的多余路径
 
                     }
 
-                    //02-1-2 
+                    //02-1-2 输入图形没有与基本图形相交或包含时
                     else { //
                         //console.log('No!  i:' + i + '  j:' + j);
-                        shapes.myShapeGroup[j].myShape.remove(); //清除输入路径缓存，不然在ai文件背后有透明度为0的多余路径
+                        //shapes.myShapeGroup[j].myShape.remove(); //清除输入路径缓存，不然在ai文件背后有透明度为0的多余路径
                     }
 
                 }
             }
         }
 
+
+        for (let j = 0; j < shapes.myShapeGroup.length; j++) {
+            shapes.myShapeGroup[j].myShape.remove(); //清除【输入路径】的缓存，不然在ai文件背后有透明度为0的多余路径
+        }
+
+        console.log('tempShapeGroup.length: ' + tempShapeGroup.length);
+
         //03 把所有的【相交】运算结果都给到 this.myShapeGroup
+
         for (let i = 0; i < tempShapeGroup.length; i++) {
             tempShapeGroup[i].myShape.seleted = false;
 
@@ -312,24 +320,24 @@ class smartShapeGroup {
         let originalBounds = shapes.getBounds();
 
         //========================================================
-        let xNumMin = 2;
-        let xNumMax = 8;
+        let xNumMin = 8;
+        let xNumMax = 3;
 
         let yNumMin = 2;
-        let yNumMax = 8;
+        let yNumMax = 3;
 
         let xNum = Math.round(xNumMin + (xNumMax - xNumMin) * Math.random());
         let yNum = xNum;
 
 
-        let scaleMax = 0.3; //比例
-        let scaleMin = 0.7; //比例
+        let scaleMax = 1; //比例
+        let scaleMin = 0.5; //比例
 
-        let rotateMin = 0; //角度度数
-        let rotateMax = 180; //角度度数
+        let rotateMin = 180; //角度度数
+        let rotateMax = 0; //角度度数
 
-        let xOffset = 70;
-        let yOffset = 50;
+        let xOffset = 30;
+        let yOffset = 0;
 
 
         // xSpace ySpace的计算 =====================================
@@ -351,6 +359,8 @@ class smartShapeGroup {
         }
 
 
+
+        //==================================================
         for (let j = 0; j < xNum; j++) {
             for (let k = 0; k < yNum; k++) {
 
@@ -369,7 +379,6 @@ class smartShapeGroup {
                 shapes.scale(scaleShape);
 
 
-
                 for (let i = 0; i < shapes.myShapeGroup.length; i++) {
                     //获取子图形
                     let temp = new smartShape(shapes.myShapeGroup[i].myShape.clone());
@@ -377,7 +386,7 @@ class smartShapeGroup {
                     shapes.myShapeGroup[i].myShape.opacity = 0; //这个把复制的图形全部隐藏
                     this.myShapeGroup.push(new smartShape(temp.myShape.clone()));
 
-                    //temp.myShape.scale(0);
+                    temp.myShape.scale(0);
                     temp.myShape.remove();
                 }
 

@@ -38,6 +38,7 @@ class shapeBoard {
             this.ifIn = false; //初始化的变量为不在画布内
             this.mouseDragged = false;
             //this.currentTag;
+            this.currentPressedKey;
         }
 
         //00.5画布变量信息显示
@@ -168,16 +169,8 @@ class shapeBoard {
         {
             if (this.drawing == 'select') {
 
-                //03-2-2 对shapeGroup的操作
                 this.itemSelect(event);
-                //this.generatePattern();
-                //this.displaySelectStatus();
-                /* if (this.ifIn && event.item) {
-                    event.item.selected = true;
-                    console.log(event.item);
-                } else if (this.ifIn && event.item == false) {
-                    event.item.selected = false;
-                } */
+
             }
         }
 
@@ -198,6 +191,14 @@ class shapeBoard {
                 }
             }
         }
+
+
+        this.currentPressedKey = 'none';
+    }
+
+    shapeBoardKeyDown(event) {
+        this.currentPressedKey = event.key;
+        //console.log('shapeBoardKeyDown:' + this.currentPressedKey);
     }
 
     //04
@@ -247,22 +248,62 @@ class shapeBoard {
 
             for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
 
+                //02
                 if (this.shapeGroup.myShapeGroup[i].myShape.hitTest(event.point)) {
                     this.shapeGroup.myShapeGroup[i].myShape.selected = true;
-                    console.log('No. ' + i + ' selected! Tags are following:');
+                    //console.log('No. ' + i + ' selected! Tags are following:');
 
-                    for (let j = 0; j < this.shapeGroup.myShapeGroup[i].myTag.length; j++) {
-                        console.log('Tag ' + j + ': ' + this.shapeGroup.myShapeGroup[i].myTag[j]);
+                    //打印每个tag的内容
+                    for (let k = 0; k < this.shapeGroup.myShapeGroup[i].myTag.length; k++) {
+
+                        //console.log('Tag ' + j + ': ' + this.shapeGroup.myShapeGroup[i].myTag[j]);
+
                     }
 
-                } else {
+                }
+                //03
+                else {
                     this.shapeGroup.myShapeGroup[i].myShape.selected = false;
                     //console.log('no selected');
                 }
             }
 
+            if (this.currentPressedKey == 'shift') {
+                for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
+                    if (this.shapeGroup.myShapeGroup[i].myShape.selected) {
+                        for (let j = 0; j < this.shapeGroup.myShapeGroup.length; j++) {
+                            if (this.ifShape1InsideShape2(this.shapeGroup.myShapeGroup[j].myShape, this.shapeGroup.myShapeGroup[i].myShape)) {
+
+                                this.shapeGroup.myShapeGroup[j].myShape.selected = true;
+
+                            }
+                        }
+                    }
+
+                }
+            }
+
+
+            //this.displaySelectStatus();
+
+
         }
     }
+
+    ifShape1InsideShape2(shape1, shape2) {
+        let ifInsideShape;
+
+        if (shape1.bounds._x > shape2.bounds._x && shape1.bounds._y > shape2.bounds._y && shape1.bounds._x + shape1.bounds._width < shape2.bounds._x + shape2.bounds._width && shape1.bounds._y + shape1.bounds._height < shape2.bounds._y + shape2.bounds._height) {
+
+            ifInsideShape = true;
+        } else {
+            ifInsideShape = false;
+        }
+
+        return ifInsideShape;
+
+    }
+
 
     //0
     itemSelect2(event) {
@@ -399,6 +440,19 @@ class shapeBoard {
             }
             //this.shapeGroup.myShapeGroup[i].myShape.selected = false;
         }
+    }
+
+    selectInsideShapes() {
+
+        for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
+            if (this.shapeGroup.myShapeGroup[i].myShape.selected) {
+                console.log(this.shapeGroup.myShapeGroup[i]);
+            }
+
+        }
+
+        //console.log(event.event.key);
+
     }
 
 }

@@ -6,8 +6,9 @@ class panel {
             this.tools = new Array;
             this.status = 'draw2'
 
-            this.tools.push(new mouseClickButton1(0, 30, 'select'));
             this.tools.push(new mouseClickButton1(0, 60, 'draw2'));
+            this.tools.push(new mouseClickButton1(0, 30, 'select'));
+
             this.tools.push(new mouseClickButton1(0, 90, 'color'));
             this.tools.push(new mouseClickButton1(0, 120, 'dots'));
         }

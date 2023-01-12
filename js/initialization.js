@@ -60,8 +60,12 @@ window.onload = function() {
         myMouseEvent.onMouseDrag = globalMouseDrag; //
         myMouseEvent.onMouseMove = globalMouseMove; //}
         myMouseEvent.onKeyUp = globalKeyUp; //}
+        myMouseEvent.onKeyDown = globalKeyDown;
 
         //console.log(myMouseEvent);
+
+        var mouseIsDown;
+        var currentPressedKey;
 
 
 
@@ -81,17 +85,13 @@ window.onload = function() {
     function globalMouseDown(event) {
         myPanel.onMouseDown(event); //先更新myPanel的status变量
 
-
-
-
-
-
         dvdCurve.drawing = myPanel.status;
         dvdCurve.simplifyLevel = myPanel.simplifyLevel; //
 
         dvdCurve.onMouseDown(event);
-        sketchWindow.onMouseDown(event);
 
+        sketchWindow.onMouseDown(event);
+        //mouseIsDown = true;
     }
 
     //0
@@ -106,11 +106,10 @@ window.onload = function() {
 
 
         dvdCurve.onMouseUp(event);
+
         sketchWindow.onMouseUp(event);
 
-        /* myPanel.tagButton[0].button1.onDoubleClick = function(event) {
-            console.log('dvdCurve');
-        } */
+
 
         //从sketchWindow发送图形
         if (myPanel.sendSketchShapesButton.button1.hitTest(event.point)) {
@@ -186,6 +185,8 @@ window.onload = function() {
 
 
 
+
+
         //导出svg
         {
             var svg = project.exportSVG(project.layers[1]);
@@ -194,6 +195,7 @@ window.onload = function() {
         }
 
 
+        mouseIsDown = false;
         console.log('======= a mouse up cycle finished  =========');
     }
 
@@ -239,35 +241,30 @@ window.onload = function() {
         }
 
 
-        /* for (let i = 0; i < myPanel.tagButton.length; i++) {
-            myPanel.tagButton[i].button1.onDoubleClick = function() {
-                console.log(i);
-                console.log(myPanel.currentTag);
-                console.log(myPanel.tagButton.length);
 
-                for (let j = 0; j < dvdCurve.shapeGroup.myShapeGroup.length; j++) {
-                    for (let k = 0; k < dvdCurve.shapeGroup.myShapeGroup[j].myTag.length; k++) {
-                        if (dvdCurve.shapeGroup.myShapeGroup[j].myTag[k] == myPanel.currentTag) {
-
-                            console.log('yes');
-                        }
-                    }
-
-
-
-                }
-
-
-            }
-
-        } */
-
+        currentPressedKey = 'no key';
 
         //在这上面写代码=================================================================
         //}
     }
 
+    function globalKeyDown(event) {
 
+        currentPressedKey = event.key;
+
+
+        dvdCurve.shapeBoardKeyDown(event);
+        sketchWindow.shapeBoardKeyDown(event);
+        /* if (mouseIsDown && event.key == 'shift') {
+            console.log(event.key);
+        }
+         */
+        //console.log(globalMouseDown(event));
+        //console.log(event);
+
+
+
+    }
 
 
 
