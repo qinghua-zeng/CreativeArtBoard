@@ -4,7 +4,7 @@ class smartShape {
         this.myShape = shape;
         //this.myShape.fillColor = 'pink';
         this.myTag = new Array;
-        this.myTag.push('noTag');
+        this.myTag.push('no tag');
         //console.log('a smartShape create!');
     }
 
@@ -431,13 +431,6 @@ class smartShapeGroup {
             tempGroup.addChildren([this.myShapeGroup[i].myShape]);
         }
         tempGroup.rotate(angle);
-    }
-
-    rotate2(angle) {
-        for (let i = 0; i < this.myShapeGroup.length; i++) {
-            //this.myShapeGroup[i].myShape
-        }
-
     }
 
     scale(percentage) {

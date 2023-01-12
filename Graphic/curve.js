@@ -1,5 +1,5 @@
 //freeOpenCurve==============================================
-class divideCurve {
+class shapeBoard {
 
     //00变量
     constructor(x, y, w, h) {
@@ -37,7 +37,7 @@ class divideCurve {
             this.drawing = 'draw2'; //控制当前是不是在绘画
             this.ifIn = false; //初始化的变量为不在画布内
             this.mouseDragged = false;
-            this.currentTag;
+            //this.currentTag;
         }
 
         //00.5画布变量信息显示
@@ -249,11 +249,15 @@ class divideCurve {
 
                 if (this.shapeGroup.myShapeGroup[i].myShape.hitTest(event.point)) {
                     this.shapeGroup.myShapeGroup[i].myShape.selected = true;
-                    console.log('selected');
+                    console.log('No. ' + i + ' selected! Tags are following:');
+
+                    for (let j = 0; j < this.shapeGroup.myShapeGroup[i].myTag.length; j++) {
+                        console.log('Tag ' + j + ': ' + this.shapeGroup.myShapeGroup[i].myTag[j]);
+                    }
 
                 } else {
                     this.shapeGroup.myShapeGroup[i].myShape.selected = false;
-                    console.log('no selected');
+                    //console.log('no selected');
                 }
             }
 
@@ -277,8 +281,6 @@ class divideCurve {
 
         }
     }
-
-
 
 
     //0
@@ -371,5 +373,32 @@ class divideCurve {
         return ifAnySelected;
     }
 
+    getTag(tag) {
+        for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
+            if (this.shapeGroup.myShapeGroup[i].myShape.selected) {
+                this.shapeGroup.myShapeGroup[i].myTag.push(tag);
+                console.log('new tag pushed!');
+                for (let j = 0; j < this.shapeGroup.myShapeGroup[i].myTag.length; j++) {
+                    //console.log(this.shapeGroup.myShapeGroup[i].myTag[j]);
+                }
+
+            }
+
+            //console.log(i + ': ' + this.shapeGroup.myShapeGroup[i].myShape.selected);
+        }
+    }
+
+    deselectAll() {
+
+        //console.log(' deselectAll');
+
+        for (let i = 0; i < this.shapeGroup.myShapeGroup.length; i++) {
+            if (this.shapeGroup.myShapeGroup[i].myShape.selected) {
+                console.log(i + ' selected');
+                this.shapeGroup.myShapeGroup[i].myShape.selected = false;
+            }
+            //this.shapeGroup.myShapeGroup[i].myShape.selected = false;
+        }
+    }
 
 }
