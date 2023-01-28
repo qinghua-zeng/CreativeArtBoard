@@ -33,7 +33,6 @@ class shapeBoard {
             this.lastShapeGroup.myShapeGroup.push(new smartShape(new Path.Rectangle(this.x1 + 30, this.y1 + 30, this.canvasWidth - 60, this.canvasHeight - 60), 'bg'));
 
             this.newTag.push('bg');
-            //this.newTag.push('bg2');
 
             //初始化背景颜色
             this.shapeGroup.myShapeGroup[0].myShape.fillColor = 'white';
@@ -53,6 +52,17 @@ class shapeBoard {
             this.shapesForSend = new smartShapeGroup();
 
             this.currentColorSet = 'cyan';
+
+
+            this.vector_bezier = new Point(0, 0); //临时正向量handleOut
+            this._vector_bezier = new Point(0, 0); //临时正向量handleIN
+
+            this.hitResult; //鼠标点击bezier
+            this.selectedHandle = null;
+            this.picked_anchor_num = null;
+            this.handleIn;
+            this.handleOut;
+
         }
 
         //00.4存储状态的变量
@@ -80,6 +90,13 @@ class shapeBoard {
         raster.scale(0.2);
         raster.position = new Point(1100, 820);
         this.colorSets = getColorSet(raster, 8, 8);
+
+        this.handleIn = new Path.Circle(new Point(200, 350), 10);
+        this.handleIn.fillColor = 'black';
+
+        this.handleOut = new Path.Circle(new Point(200, 450), 10);
+        this.handleOut.fillColor = 'red';
+
 
         //this.shapeGroup.myShapeGroup[0].myShape.fillColor = this.colorSets[6];
 
@@ -112,49 +129,74 @@ class shapeBoard {
 
         if (this.drawing == 'test') {
 
-            /* //let ttt = generateRandomString();
-            //console.log(ttt);
-
-
-
-            //====== 图形1 =======================================
-            let pt = new Point(200, 200);
-            let radius = 100;
-
-            let circle = new Path.Circle({
-                center: pt,
-
-                radius: radius,
-                fillColor: 'red'
-            });
-
-            let pts = getPointsFromCircle(circle, 16);
-            let cls = arrayCircle2(pts, [5, 20], 'points');
-
-            let pts4 = getPointsAngleFromCircle(circle, 9);
-
-            //====== 图形2 =========================================
-            let pts3 = new Point(600, 200); //圆的中心点
-
-            //一组圆的半径
-            let circleNum = getRandomArray(3, 10, 100, 'float'); //参数顺序 num, min, max, ifInt
-
-            //基于点和半径生成一组圆
-            let ccs = arrayCircle2(pts3, circleNum, 'radius');
-
-            //======= 图形3 ========================================
-
-            let rec = new Path.Rectangle(200, 400, 130, 30);
-            rec.fillColor = 'green';
-
-            let arrayRec = arrayShape(rec, pts4);
-            this.newTag = generateRandomString(); */
-
-
         }
 
         //01-2 如果是“选择”状态
-        if (this.drawing == 'select') {}
+        if (this.drawing == 'select') {
+
+            this.hitResult = this.bezierCurve.hitTest(event.point, {
+                tolerance: 5,
+                fill: true,
+                stroke: true,
+
+                handles: true
+            });
+
+
+
+            if (this.hitResult) {
+
+                this.bezierCurve.selected = true;
+                //console.log(this.hitResult.type);
+
+                //如果点击了handleIn或锚点
+                if (this.hitResult.type == 'handle-in') {
+                    console.log('Selected handleIn');
+                    console.log(this.hitResult.segment);
+                    //console.log(this.hitResult.location);
+
+                    //console.log(this.bezierCurve);
+                    //console.log(this.hitResult);
+                    //console.log(this.hitResult.segment._handleIn);
+                    //console.log(this.bezierCurve._segments[this.hitResult.segment._index]._point);
+                    //console.log(this.bezierCurve._segments[this.hitResult.segment._index]._handleIn._x);
+
+                }
+                //如果点击了handleOut
+                else if (this.hitResult.type == 'handle-out') {
+                    console.log('Selected handleOut');
+                }
+
+                //点击了其他线段部位或锚点，如果点中锚点记录锚点所在segment的序号
+                else {
+                    //console.log(event.point);
+                    //console.log(this.bezierCurve._segments[this.hitResult.segment._index]);
+
+                    //console.log(this.hitResult.item._segments);
+
+                    //找到锚点所在segment的序号
+                    for (let i = 0; i < this.hitResult.item._segments.length; i++) {
+                        if (Math.abs(event.point.x - this.hitResult.item._segments[i]._point._x) < 5 && Math.abs(event.point.y - this.hitResult.item._segments[i]._point._y) < 5) {
+                            this.picked_anchor_num = i;
+                            break;
+                        }
+                    }
+
+                    console.log(this.handleIn);
+
+                    this.handleIn.position = new Point(this.bezierCurve._segments[this.picked_anchor_num]._handleIn._x + this.bezierCurve._segments[this.picked_anchor_num]._point._x, this.bezierCurve._segments[this.picked_anchor_num]._handleIn._y + this.bezierCurve._segments[this.picked_anchor_num]._point._y);
+
+
+                    this.handleOut.position = new Point(this.bezierCurve._segments[this.picked_anchor_num]._handleOut._x + this.bezierCurve._segments[this.picked_anchor_num]._point._x, this.bezierCurve._segments[this.picked_anchor_num]._handleOut._y + this.bezierCurve._segments[this.picked_anchor_num]._point._y);
+                    //this.handleIn.position.y = 500;
+                    //this.handleIn.position = this.bezierCurve._segments[this.picked_anchor_num]._point;
+                    //console.log(this.bezierCurve._segments[this.picked_anchor_num]._handleIn);
+
+                }
+            }
+
+
+        }
         ////01-2 如果是“绘画”状态
         if (this.drawing == 'draw2') {
 
@@ -181,15 +223,13 @@ class shapeBoard {
 
         //01-3 如果是bezeir模式
         if (this.drawing == 'bezeir') {
-            //this.path.moveTo(event.point);
-
-            //this.path.curveTo(70, 100, 130, 100, 150, 50);
 
             if (this.ifIn == true) {
 
+                //01-3-1 存在但封闭，需要创建新的
                 if (this.bezierCurve) {
 
-                    //存在但封闭，需要创建新的
+                    //01-3-1-1 存在但封闭，需要创建新的
                     if (this.bezierCurve.closed) {
                         //console.log('exist closed, create new');
                         this.bezierCurve.remove();
@@ -199,14 +239,14 @@ class shapeBoard {
                         this.bezierCurve.strokeWidth = 2;
                         this.bezierCurve.fullySelected = true;
                     }
-                    //存在但没封闭，说明正在画
+                    //01-3-1-2 存在但没封闭，说明正在画
                     else {
                         //console.log('exist, continue');
                         this.mouseDownPoint = event.point;
                     }
 
                 }
-                //不存在，创建新的
+                //01-3-2 不存在，创建新的
                 else {
                     //console.log('no exist');
                     this.bezierCurve = new Path();
@@ -216,12 +256,12 @@ class shapeBoard {
                     this.bezierCurve.fullySelected = true;
                 }
 
+                //临时贝塞尔曲线直线操纵杆
                 this.bezierHandle = new Path();
                 this.bezierHandle.fullySelected = true;
                 this.bezierHandle.add(event.point);
                 this.bezierHandle.add(event.point);
-                //this.bezierHandle.add(new Point(300, 300));
-                //console.log(this.bezierHandle._segments[1]._point._x);
+
             }
 
 
@@ -232,6 +272,67 @@ class shapeBoard {
     //02 鼠标拖拽的情况  While the user drags the mouse, points are added to the path
     onMouseDrag(event) {
         this.mouseDragged = true;
+
+        this.vector_bezier.x = event.point.x - this.mouseDownPoint.x; //handleIn向量
+        this.vector_bezier.y = event.point.y - this.mouseDownPoint.y; //handleOut向量
+
+        if (this.drawing == 'select') {
+            //console.log(this.hitResult);
+            if (this.hitResult) {
+
+                //如果点击了handleIn
+                if (this.hitResult.type == 'handle-in') {
+                    //这种情况代操纵杆和锚点重合，点击的是锚点，不是操纵杆，所以移动锚点
+                    if (this.bezierCurve._segments[this.hitResult.segment._index]._handleIn._x == 0 && this.bezierCurve._segments[this.hitResult.segment._index]._handleIn._y == 0) {
+
+                        //console.log('yes 0');
+                        this.bezierCurve._segments[this.hitResult.segment._index]._point._x = event.point.x;
+                        this.bezierCurve._segments[this.hitResult.segment._index]._point._y = event.point.y;
+
+                    }
+                    //这种情况代表点击的是操纵杆 handleIn
+                    else {
+
+                        //in
+                        this.bezierCurve._segments[this.hitResult.segment._index]._handleIn._x = event.point.x - this.bezierCurve._segments[this.hitResult.segment._index]._point._x;
+                        this.bezierCurve._segments[this.hitResult.segment._index]._handleIn._y = event.point.y - this.bezierCurve._segments[this.hitResult.segment._index]._point._y;
+
+                        //out
+                        this.bezierCurve._segments[this.hitResult.segment._index]._handleOut._x = this.bezierCurve._segments[this.hitResult.segment._index]._point._x - event.point.x;
+                        this.bezierCurve._segments[this.hitResult.segment._index]._handleOut._y = this.bezierCurve._segments[this.hitResult.segment._index]._point._y - event.point.y;
+
+                        //操纵杆的小圆圈 in
+                        this.handleIn.position = event.point;
+
+                        //操纵杆的小圆圈 out
+                        this.handleOut.position = new Point(this.bezierCurve._segments[this.hitResult.segment._index]._point._x + this.bezierCurve._segments[this.hitResult.segment._index]._handleOut._x, this.bezierCurve._segments[this.hitResult.segment._index]._point._y + this.bezierCurve._segments[this.hitResult.segment._index]._handleOut._y);
+
+
+                    }
+
+                }
+                //如果点击了handleOut
+                else if (this.hitResult.type == 'handle-out') {
+
+                }
+                //点击了其他线段部位或锚点
+                else {
+                    if (this.picked_anchor_num != null) {
+                        this.bezierCurve._segments[this.picked_anchor_num]._point._x = event.point.x;
+                        this.bezierCurve._segments[this.picked_anchor_num]._point._y = event.point.y;
+
+                        this.handleIn.position = new Point(this.bezierCurve._segments[this.picked_anchor_num]._handleIn._x + this.bezierCurve._segments[this.picked_anchor_num]._point._x, this.bezierCurve._segments[this.picked_anchor_num]._handleIn._y + this.bezierCurve._segments[this.picked_anchor_num]._point._y);
+
+
+                        this.handleOut.position = new Point(this.bezierCurve._segments[this.picked_anchor_num]._handleOut._x + this.bezierCurve._segments[this.picked_anchor_num]._point._x, this.bezierCurve._segments[this.picked_anchor_num]._handleOut._y + this.bezierCurve._segments[this.picked_anchor_num]._point._y);
+                    }
+                }
+            }
+
+
+        }
+
+
         if (this.drawing == 'draw2') {
             //这次下笔产生的新图形
             this.ifMouseInsideBoard(event.point); //用于切换this.ifIn的状态，即鼠标是否在画布内
@@ -251,6 +352,8 @@ class shapeBoard {
             this.bezierHandle._segments[1]._point._x = event.point.x;
             this.bezierHandle._segments[1]._point._y = event.point.y;
 
+            this.vector_bezier.x = event.point.x - this.mouseDownPoint.x;
+            this.vector_bezier.y = event.point.y - this.mouseDownPoint.y;
         }
 
     }
@@ -369,7 +472,7 @@ class shapeBoard {
                 if (this.bezierCurve) {
                     this.bezierCurve.closed = true;
                     this.bezierCurve.selected = false;
-                    this.shapeGroup.pushNewShape(this.bezierCurve.clone());
+                    //this.shapeGroup.pushNewShape(this.bezierCurve.clone());
                 }
 
                 //console.log(this.shapeGroup.myShapeGroup.length);

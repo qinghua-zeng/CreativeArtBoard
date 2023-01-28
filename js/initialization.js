@@ -78,20 +78,14 @@ window.onload = function() {
     }
 
     //setup
+    {
+        myPanel.setup_panel(event);
+        dvdCurve.setup_shapeBoard();
 
-    myPanel.setup_panel(event);
-    dvdCurve.setup_shapeBoard();
-
-    dvdCurve.drawing = myPanel.status;
-    dvdCurve.simplifyLevel = myPanel.simplifyLevel; //
-    dvdCurve.currentColorSet = myPanel.currentColorSet;
-
-
-
-
-    //getColorRange(colorSets);
-
-
+        dvdCurve.drawing = myPanel.status;
+        dvdCurve.simplifyLevel = myPanel.simplifyLevel; //
+        dvdCurve.currentColorSet = myPanel.currentColorSet;
+    }
 
 
     //02 实时刷新模块，所有需要实时刷新的内容都在这
