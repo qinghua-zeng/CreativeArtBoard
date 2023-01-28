@@ -1,11 +1,11 @@
 //=================================================
 class smartShape {
-    constructor(shape) {
+    constructor(shape, _tag) {
         this.myShape = shape;
         //this.myShape.fillColor = 'pink';
         this.myTag = new Array;
-        this.myTag.push('no tag');
-        //console.log('a smartShape create!');
+        this.myTag.push(_tag);
+        //console.log('a smartShape create!  ' + _tag);
     }
 
 }
@@ -55,7 +55,7 @@ class smartShapeGroup {
                         let gg = shapes.myShapeGroup[j].myShape.intersect(this.myShapeGroup[i].myShape);
                         //在this.tempShapeGroup创建新的smartShape类
                         //this.tempShapeGroup.push(new smartShape());
-                        tempShapeGroup.push(new smartShape(gg.clone()));
+                        tempShapeGroup.push(new smartShape(gg.clone(), 'gg'));
 
                         //运算结果给到 this.tempShapeGroup
                         //tempShapeGroup[tempShapeGroup.length - 1].myShape = gg.clone();
@@ -113,7 +113,7 @@ class smartShapeGroup {
 
     }
 
-    uniteSelectedShapes(shapes) {
+    uniteSelectedShapes(shapes, _colorMode) {
         console.log('=== start doing uniteSelectedShapes()...');
         let tempShapeGroup = new Array;
         let ifAnySelectedShape = false;
@@ -125,8 +125,7 @@ class smartShapeGroup {
 
             if (this.myShapeGroup[i].myShape.selected == true) { //遍历【基本】图形
                 ifAnySelectedShape = true;
-                //console.log('yes! i:' + i + ' selected');
-                //console.log(i);
+
                 this.myShapeGroup[i].myShape.selected = false;
 
                 //02-1 对每个原始图形进行判断
@@ -134,8 +133,6 @@ class smartShapeGroup {
 
                     //02-1-1 只有与输入图形相交或包含的原图形才会被选择 进行布尔运算
                     if (this.myShapeGroup[i].myShape.intersects(shapes.myShapeGroup[j].myShape) || this.myShapeGroup[i].myShape.contains(shapes.myShapeGroup[j].myShape.position)) {
-
-                        //console.log('yes! i:' + i + '  j:' + j);
 
                         //02 布尔运算,
                         {
@@ -147,15 +144,21 @@ class smartShapeGroup {
 
                             intersectResult.opacity = 1;
 
+                            if (_colorMode == 'random') {
+                                intersectResult.fillColor = globalColor('no');
+                                //intersectResult.fillColor = 'green';
+                            }
+
+
+                            //let ttt = generateRandomString();
                             //在this.tempShapeGroup创建新的smartShape类
-                            tempShapeGroup.push(new smartShape(intersectResult.clone()));
+                            tempShapeGroup.push(new smartShape(intersectResult.clone(), shapes.myShapeGroup[j].myTag[0]));
+                            //console.log(shapes.myShapeGroup[j].myTag[0]);
 
                             this.myShapeGroup[i].myShape.scale(0); //清空缓存
                             this.myShapeGroup[i].myShape.remove();
 
                             this.myShapeGroup[i].myShape = subtractResult.clone(); //把参与运算的图形变成相减后的结果
-
-
 
                             //取消缓存显示
                             {
@@ -166,14 +169,6 @@ class smartShapeGroup {
                             }
                         }
 
-                        //shapes.myShapeGroup[j].myShape.remove(); //清除【输入路径】的缓存，不然在ai文件背后有透明度为0的多余路径
-
-                    }
-
-                    //02-1-2 输入图形没有与基本图形相交或包含时
-                    else { //
-                        //console.log('No!  i:' + i + '  j:' + j);
-                        //shapes.myShapeGroup[j].myShape.remove(); //清除输入路径缓存，不然在ai文件背后有透明度为0的多余路径
                     }
 
                 }
@@ -194,6 +189,7 @@ class smartShapeGroup {
 
             //tempShapeGroup[i].myShape.fillColor = 'yellow'; //只针对相交产生的图形
             this.myShapeGroup.push(tempShapeGroup[i]);
+            //console.log(tempShapeGroup[i]);
             //tempShapeGroup[i].myShape.remove();
         }
 
@@ -240,107 +236,36 @@ class smartShapeGroup {
         }
     }
 
-    //基于传递进来的基本图形组（smartShapeGroup类） 生成复合图案 最终生成smartShapeGroup类============================================
-    generatePattern2(bounds, shapes) {
+    //基于传递进来的基本图形组（smartShapeGroup类） 生成复合图案 最终生成smartShapeGroup类
+    generatePattern4(bounds, shapes, _xNumMin, _xNumMax, _yNumMin, _yNumMax, _scaleMax, _scaleMin, _rotateMin, _rotateMax, _xOffset, _yOffset) {
+        console.log('=== start doing generatePattern4 ()...');
 
-        let xNum = 3;
-        let yNum = 3;
-
-        let xSpace;
-        let ySpace;
-
-        let scaleShape = 0.8;
-        //获得输入图形的最大bounds
-
-        //缩放图形
-        for (let i = 0; i < shapes.myShapeGroup.length; i++) {
-            //shapes.myShapeGroup[i].myShape.scale(1.4);
-        }
-
-        let tempGroup = new Group();
-        for (let i = 0; i < shapes.myShapeGroup.length; i++) {
-            tempGroup.addChildren([shapes.myShapeGroup[i].myShape]);
-        }
-
-
-
-
-        //确定坐标
-        for (let i = 0; i < shapes.myShapeGroup.length; i++) {
-            console.log(shapes.myShapeGroup[i].myShape.position);
-            console.log(shapes.myShapeGroup[i].myShape.bounds);
-            shapes.myShapeGroup[i].myShape.position = new Point(bounds._x + shapes.myShapeGroup[i].myShape.position._x, bounds._y + shapes.myShapeGroup[i].myShape.position._y);
-        }
-
-        //tempGroup.scale(0.6);
-
-        /* //确定坐标
-        for (let i = 0; i < shapes.myShapeGroup.length; i++) {
-            console.log(shapes.myShapeGroup[i].myShape.position);
-            console.log(shapes.myShapeGroup[i].myShape.bounds);
-            shapes.myShapeGroup[i].myShape.position = new Point(bounds._x + shapes.myShapeGroup[i].myShape.position._x - shapes.myShapeGroup[i].myShape.bounds._x, bounds._y + shapes.myShapeGroup[i].myShape.position._y - shapes.myShapeGroup[i].myShape.bounds._y);
-        } */
-
-
-
-        xSpace = (bounds._width - tempGroup.bounds._width) / (xNum - 1);
-        ySpace = (bounds._height - tempGroup.bounds._height) / (yNum - 1);
-
-        //this.myShapeGroup = shapes.myShapeGroup; //完全接受传来的图形
-        for (let i = 0; i < shapes.myShapeGroup.length; i++) {
-            //this.pushNewShape();
-            for (let j = 0; j < xNum; j++) {
-                for (let k = 0; k < yNum; k++) {
-                    //this.pushNewShape(shapes.myShapeGroup[i].myShape);
-                    //this.myShapeGroup.push(shapes.myShapeGroup[i]);
-                    let temp = new smartShape(shapes.myShapeGroup[i].myShape.clone());
-                    temp.myShape.opacity = 0;
-                    shapes.myShapeGroup[i].myShape.opacity = 0; //这个把复制的图形全部隐藏
-                    temp.myShape.position = new Point((temp.myShape.position._x + (j * xSpace)), temp.myShape.position._y + (k * ySpace));
-                    this.myShapeGroup.push(new smartShape(temp.myShape.clone()));
-                    temp.myShape.scale(0);
-                    temp.myShape.remove();
-                }
-            }
-        }
-
-        for (let i = 0; i < shapes.myShapeGroup.length; i++) {
-            shapes.myShapeGroup[i].myShape.remove();
-        }
-
-        console.log('did generatePattern2()');
-        //console.log('this.myShapeGroup.length: ' + this.myShapeGroup.length);
-
-    }
-
-    //基于传递进来的基本图形组（smartShapeGroup类） 生成复合图案 最终生成smartShapeGroup类============================================
-    generatePattern3(bounds, shapes) {
-        console.log('=== start doing generatePattern3 ()...');
+        //let sss = shapes;
+        //console.log(sss);
 
         let originalBounds = shapes.getBounds();
 
         //========================================================
-        let xNumMin = 8;
-        let xNumMax = 3;
+        let xNumMin = _xNumMin;
+        let xNumMax = _xNumMax;
 
-        let yNumMin = 2;
-        let yNumMax = 3;
+        let yNumMin = _yNumMin;
+        let yNumMax = _yNumMax;
+
+        let scaleMax = _scaleMax; //比例
+        let scaleMin = _scaleMin; //比例
+
+        let rotateMin = _rotateMin; //角度度数
+        let rotateMax = _rotateMax; //角度度数
+
+        let xOffset = _xOffset;
+        let yOffset = _yOffset;
+
+        // xSpace ySpace的计算 =====================================
 
         let xNum = Math.round(xNumMin + (xNumMax - xNumMin) * Math.random());
         let yNum = xNum;
 
-
-        let scaleMax = 1; //比例
-        let scaleMin = 0.5; //比例
-
-        let rotateMin = 180; //角度度数
-        let rotateMax = 0; //角度度数
-
-        let xOffset = 30;
-        let yOffset = 0;
-
-
-        // xSpace ySpace的计算 =====================================
         let xSpace;
         let ySpace;
 
@@ -381,10 +306,10 @@ class smartShapeGroup {
 
                 for (let i = 0; i < shapes.myShapeGroup.length; i++) {
                     //获取子图形
-                    let temp = new smartShape(shapes.myShapeGroup[i].myShape.clone());
+                    let temp = new smartShape(shapes.myShapeGroup[i].myShape.clone(), 'temp');
                     temp.myShape.opacity = 0;
                     shapes.myShapeGroup[i].myShape.opacity = 0; //这个把复制的图形全部隐藏
-                    this.myShapeGroup.push(new smartShape(temp.myShape.clone()));
+                    this.myShapeGroup.push(new smartShape(temp.myShape.clone(), shapes.myShapeGroup[i].myTag[0]));
 
                     temp.myShape.scale(0);
                     temp.myShape.remove();
@@ -403,15 +328,15 @@ class smartShapeGroup {
             shapes.myShapeGroup[i].myShape.remove();
         }
 
-        console.log('=== done generatePattern3()');
+        console.log('=== done generatePattern4()');
         //console.log('this.myShapeGroup.length: ' + this.myShapeGroup.length);
 
     }
 
 
     //============================================
-    pushNewShape(shape) {
-        this.myShapeGroup.push(new smartShape(shape));
+    pushNewShape(shape, _tag) {
+        this.myShapeGroup.push(new smartShape(shape, _tag));
     }
 
     //====
@@ -468,6 +393,118 @@ class smartShapeGroup {
         tempGroup.position = new Point(tempGroup.position._x + x, tempGroup.position._y + y);
         //console.log(tempGroup.position);
         //console.log(new Point(x, y));
+    }
+
+    remove() {
+        for (let i = 0; i < this.myShapeGroup.length; i++) {
+            //this.myShapeGroup[i].myShape.scale(0);
+            this.myShapeGroup[i].myShape.remove();
+
+        }
+        this.myShapeGroup.length = 0;
+    }
+
+
+    //基于传递进来的基本图形组（smartShapeGroup类） 生成复合图案 最终生成smartShapeGroup类============================================
+    generatePattern3(bounds, shapes) {
+        console.log('=== start doing generatePattern3 ()...');
+
+        let sss = shapes;
+        console.log(sss);
+
+        /* for(){
+    
+            } */
+
+        let originalBounds = shapes.getBounds();
+
+        //========================================================
+        let xNumMin = 4;
+        let xNumMax = 7;
+
+        let yNumMin = 2;
+        let yNumMax = 3;
+
+        let xNum = Math.round(xNumMin + (xNumMax - xNumMin) * Math.random());
+        let yNum = xNum;
+
+
+        let scaleMax = 0.7; //比例
+        let scaleMin = 0.3; //比例
+
+        let rotateMin = 0; //角度度数
+        let rotateMax = 180; //角度度数
+
+        let xOffset = 40;
+        let yOffset = 40;
+
+
+        // xSpace ySpace的计算 =====================================
+        let xSpace;
+        let ySpace;
+
+        {
+            if (xNum > 1) {
+                xSpace = (bounds._width - originalBounds._width) / (xNum - 1);
+            } else {
+                xSpace = 0;
+            }
+
+            if (yNum > 1) {
+                ySpace = (bounds._height - originalBounds._height) / (yNum - 1);
+            } else {
+                ySpace = 0;
+            }
+        }
+
+
+
+        //==================================================
+        for (let j = 0; j < xNum; j++) {
+            for (let k = 0; k < yNum; k++) {
+
+                let xOffsetRandom = xOffset * (-1) + xOffset * 2 * (Math.random());
+                let yOffsetRandom = yOffset * (-1) + yOffset * 2 * (Math.random());
+
+                //先调整位置
+                shapes.moveTo(new Point(originalBounds._width / 2 + bounds._x + j * xSpace + xOffsetRandom, originalBounds._height / 2 + k * ySpace + yOffsetRandom + bounds._y));
+
+                //随机角度
+                let rotateShape = rotateMin + (rotateMax - rotateMin) * Math.random();
+                shapes.rotate(rotateShape);
+
+                //随机缩放
+                let scaleShape = scaleMin + (scaleMax - scaleMin) * Math.random();
+                shapes.scale(scaleShape);
+
+
+                for (let i = 0; i < shapes.myShapeGroup.length; i++) {
+                    //获取子图形
+                    let temp = new smartShape(shapes.myShapeGroup[i].myShape.clone(), 'yyy');
+                    temp.myShape.opacity = 0;
+                    shapes.myShapeGroup[i].myShape.opacity = 0; //这个把复制的图形全部隐藏
+                    this.myShapeGroup.push(new smartShape(temp.myShape.clone(), 'uuu'));
+
+                    temp.myShape.scale(0);
+                    temp.myShape.remove();
+                }
+
+                //恢复图形的原大小和角度
+                shapes.scale(1 / scaleShape);
+                shapes.rotate(rotateShape * (-1));
+
+                //恢复位置
+                shapes.moveTo(new Point(originalBounds._width / 2 + bounds._x + j * xSpace - xOffsetRandom, originalBounds._height / 2 + bounds._y + k * ySpace - yOffsetRandom));
+            }
+        }
+
+        for (let i = 0; i < shapes.myShapeGroup.length; i++) {
+            shapes.myShapeGroup[i].myShape.remove();
+        }
+
+        console.log('=== done generatePattern3()');
+        //console.log('this.myShapeGroup.length: ' + this.myShapeGroup.length);
+
     }
 
 }
